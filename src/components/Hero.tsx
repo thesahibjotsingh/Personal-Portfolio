@@ -34,7 +34,14 @@ export default function Hero() {
             style={step(1)}
           >
             Saheb,{' '}
-            <em className="italic text-carnation-deep">I build digital experiences</em>
+            <em className="italic text-carnation-deep">
+              I build digital{' '}
+              {/* set larger so the word fills its line out to the right edge of
+                  "digital" above and "impact" below */}
+              <span className="text-[1.25em] leading-[0.9] lg:text-[1.55em] lg:leading-[0.85] 2xl:text-[1.9em] 2xl:leading-[0.8]">
+                experiences
+              </span>
+            </em>
             <br />
             that deliver real impact<span className="text-carnation-deep">.</span>
           </h1>
