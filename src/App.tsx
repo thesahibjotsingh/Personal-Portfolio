@@ -1,13 +1,21 @@
-import BackgroundVideo from './components/BackgroundVideo'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
+import Work from './components/Work'
+import Stack from './components/Stack'
+import Contact from './components/Contact'
+import Footer from './components/Footer'
 
 function App() {
   return (
     <>
-      <BackgroundVideo />
       <Navbar />
-      <Hero />
+      <main>
+        <Hero />
+        <Work />
+        <Stack />
+        <Contact />
+      </main>
+      <Footer />
     </>
   )
 }

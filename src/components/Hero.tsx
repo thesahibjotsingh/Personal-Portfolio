@@ -1,126 +1,123 @@
 import { useEffect, useState } from 'react'
-import { useTypewriter } from '../hooks/useTypewriter'
+import HeroMedia from './HeroMedia'
 
-const TYPEWRITER_TEXT =
-  'Glad you stopped in. Good taste tends to find us. Now, what are we building?'
-
-const PILL_LABELS = [
-  'Pitch us an idea',
-  'Come work here',
-  'Send a brief hello',
-  'See how we operate',
-]
-
-const EMAIL = 'hello@mainframe.co'
-
-const PILL_CLASSES =
-  'inline-flex items-center justify-center rounded-full border border-black/10 bg-white px-4 py-[0.3em] text-[13px] text-black transition-colors duration-200 hover:bg-black hover:text-white sm:px-5 sm:text-[15px]'
+const step = (i: number) => ({ transitionDelay: `${140 + i * 110}ms` })
 
 export default function Hero() {
-  const { displayed, done } = useTypewriter(TYPEWRITER_TEXT)
-  const [pillsVisible, setPillsVisible] = useState(false)
+  const [entered, setEntered] = useState(false)
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => setPillsVisible(true), 400)
-    return () => clearTimeout(timeoutId)
+    const id = requestAnimationFrame(() => setEntered(true))
+    return () => cancelAnimationFrame(id)
   }, [])
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(EMAIL)
-  }
-
   return (
-    <section className="relative z-[1] flex h-screen flex-col justify-end overflow-hidden px-5 pb-12 sm:px-8 md:justify-center md:px-10 md:pb-0">
-      <div className="relative z-10 max-w-xl">
-        <div
-          className="pointer-events-none mb-5 select-none sm:mb-6"
-          style={{
-            fontSize: 'clamp(18px, 4vw, 26px)',
-            lineHeight: 1.3,
-            fontWeight: 400,
-            color: '#000',
-            filter: 'blur(4px)',
-          }}
-        >
-          Hey there, meet A.R.I.A,
-          <br />
-          Mainframe's Adaptive Response Interface Agent
-        </div>
+    <section
+      id="top"
+      className={`relative flex min-h-svh flex-col overflow-hidden pt-[72px] lg:block ${
+        entered ? 'hero-in' : ''
+      }`}
+    >
+      <HeroMedia />
 
-        <p
-          className="mb-5 text-black sm:mb-6"
-          style={{
-            fontSize: 'clamp(18px, 4vw, 26px)',
-            lineHeight: 1.35,
-            fontWeight: 400,
-            minHeight: '54px',
-          }}
-        >
-          {displayed}
-          {!done && (
-            <span
-              className="ml-[2px] inline-block h-[1.1em] w-[2px] align-middle bg-black"
-              style={{ animation: 'blink 1s step-end infinite' }}
-            />
-          )}
-        </p>
-
-        <div
-          className="flex flex-wrap gap-y-1"
-          style={{
-            opacity: pillsVisible ? 1 : 0,
-            transform: pillsVisible ? 'translateY(0)' : 'translateY(8px)',
-            transition: 'opacity 0.4s ease, transform 0.4s ease',
-          }}
-        >
-          {PILL_LABELS.map((label) => (
-            <button
-              key={label}
-              type="button"
-              className={`mx-[0.2em] mb-[0.4em] whitespace-nowrap ${PILL_CLASSES}`}
-            >
-              {label}
-            </button>
-          ))}
-
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="mx-[0.2em] mb-[0.4em] inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white bg-transparent px-4 py-[0.3em] text-[13px] text-white transition-colors duration-200 hover:bg-white hover:text-black sm:gap-3 sm:px-5 sm:text-[15px]"
+      <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-10 md:px-8 lg:min-h-[calc(100svh-72px)] lg:py-0 lg:pl-[6vw] lg:pr-0">
+        <div className="w-full lg:w-[46%]">
+          <p
+            className="hero-step font-mono text-[0.8rem] uppercase tracking-[0.2em] text-dim"
+            style={step(0)}
           >
-            <span>
-              Reach us:{' '}
-              <span className="underline underline-offset-1">{EMAIL}</span>
-            </span>
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            Hello, I'm
+          </p>
+
+          <h1
+            className="hero-step mt-5 font-display text-[clamp(2.5rem,5.2vw,4rem)] font-normal leading-[1.1] tracking-[-0.02em] text-ivory"
+            style={step(1)}
+          >
+            Saheb,{' '}
+            <em className="italic text-carnation-deep">I build digital experiences</em>
+            <br />
+            that deliver real impact<span className="text-carnation-deep">.</span>
+          </h1>
+
+          <p
+            className="hero-step mt-5 max-w-[46ch] text-[1.0625rem] leading-[1.75] text-muted"
+            style={step(2)}
+          >
+            Full Stack Developer specializing in Firebase-powered web applications. I
+            help businesses streamline operations, engage customers, and grow online.
+          </p>
+
+          <div
+            className="hero-step mt-8 flex flex-wrap items-center gap-7"
+            style={step(3)}
+          >
+            <a
+              href="#work"
+              className="inline-flex items-center gap-[0.6rem] rounded-[3px] border border-carnation px-7 py-[0.9rem] text-[0.9375rem] font-medium text-carnation transition-colors hover:bg-carnation hover:text-void"
             >
-              <rect
-                x="4"
-                y="4"
-                width="7"
-                height="7"
-                rx="1"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-              <rect
-                x="1"
-                y="1"
-                width="7"
-                height="7"
-                rx="1"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-            </svg>
-          </button>
+              View My Work
+              <ArrowUpRight />
+            </a>
+
+            <a
+              href="#work"
+              className="group inline-flex items-center gap-[0.6rem] text-[0.9rem] text-muted transition-colors hover:text-carnation"
+            >
+              Scroll to explore
+              <ArrowDown />
+            </a>
+          </div>
+
+          <p
+            className="hero-step mt-10 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim"
+            style={step(4)}
+          >
+            <span
+              className="inline-block h-2 w-2 rounded-full bg-carnation"
+              style={{ animation: 'availPulse 2.2s ease-in-out infinite' }}
+              aria-hidden="true"
+            />
+            Available for new projects
+          </p>
         </div>
       </div>
     </section>
+  )
+}
+
+function ArrowUpRight() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M7 17 17 7M9 7h8v8" />
+    </svg>
+  )
+}
+
+function ArrowDown() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ animation: 'bob 2s ease-in-out infinite' }}
+    >
+      <path d="M12 5v14M19 12l-7 7-7-7" />
+    </svg>
   )
 }
