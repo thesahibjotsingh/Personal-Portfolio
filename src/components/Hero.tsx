@@ -25,16 +25,16 @@ export default function Hero() {
   return (
     <section
       id="top"
-      /* 88svh on desktop, not 100: the next section should peek above the fold
+      /* 78svh on desktop, not 100: the next section should peek above the fold
          so the hero doesn't read as a dead-end screen */
-      className={`relative flex min-h-svh flex-col overflow-hidden pt-[var(--nav-h,73px)] lg:block lg:min-h-[88svh] ${
+      className={`relative flex min-h-svh flex-col overflow-hidden pt-[var(--nav-h,73px)] lg:block lg:min-h-[78svh] ${
         entered ? 'hero-in' : ''
       }`}
     >
       <HeroMedia />
 
       {/* tighter vertical rhythm on phones so the statue reaches the first screen */}
-      <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-6 md:px-8 md:py-10 lg:min-h-[calc(88svh-var(--nav-h,73px))] lg:py-0 lg:pl-[6vw] lg:pr-0">
+      <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-6 md:px-8 md:py-10 lg:min-h-[calc(78svh-var(--nav-h,73px))] lg:py-0 lg:pl-[6vw] lg:pr-0">
         <div className="w-full lg:w-[46%]">
           <p
             className="hero-step flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim"
@@ -65,12 +65,20 @@ export default function Hero() {
             className="hero-step mt-4 font-sans text-[clamp(1.95rem,4vw,3.15rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.02em] text-ivory md:mt-5"
             style={step(2)}
           >
-            Websites that make your business{' '}
+            {/* Breaks are explicit above 768px so the lines ascend in length
+                (short, medium, longest) instead of wrapping long/short/longest.
+                text-wrap: balance would even them out and kill that shape.
+                Below 768px they collapse and the text wraps naturally. */}
+            Websites that{' '}
+            <br className="hidden md:inline" />
+            make your business{' '}
+            <br className="hidden md:inline" />
             <span className="text-carnation">impossible to ignore.</span>
           </h1>
 
           <p
-            className="hero-step mt-5 max-w-[46ch] text-[1.0625rem] leading-[1.6] text-muted md:leading-[1.75]"
+            /* 52ch, not 46: at 46 the last line orphaned "look ancient." */
+            className="hero-step mt-5 max-w-[52ch] text-[1.0625rem] leading-[1.6] text-muted md:leading-[1.75]"
             style={step(3)}
           >
             I engineer platforms for ambitious brands that establish absolute trust,
@@ -91,10 +99,11 @@ export default function Hero() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Book a call with Saheb on WhatsApp"
-              className={`${BUTTON_BASE} border-white/25 text-ivory hover:border-carnation hover:text-carnation`}
+              className={`${BUTTON_BASE} btn-whatsapp`}
             >
-              <Icon name="whatsapp" className="h-[1.1em] w-[1.1em] shrink-0" />
-              Book a Call
+              {/* lifted above the shine sweep, which sits at z-index 0 */}
+              <Icon name="whatsapp" className="relative z-10 h-[1.1em] w-[1.1em] shrink-0" />
+              <span className="relative z-10">Book a Call</span>
             </a>
           </div>
         </div>

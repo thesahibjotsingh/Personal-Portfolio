@@ -12,8 +12,19 @@ const SENSITIVITY = 0.8
    cover crop takes off the head or the feet. The clip's background is exactly
    #000 — the same as --color-void — so the letterboxing contain leaves behind
    is invisible against the page. */
+/* Opacity is set by the mediaIn keyframe's end state (0.9), not a class here:
+   the animation runs fill-mode both, so it wins over any static opacity. */
 const MEDIA_CLASSES = 'h-full w-full object-contain object-center lg:object-right'
-const MEDIA_STYLE = { animation: 'mediaIn 1s cubic-bezier(.22,1,.36,1) both' }
+
+/* Dissolve the pedestal into the background instead of letting the section
+   boundary guillotine it. Masking the element (rather than overlaying black)
+   means it fades against whatever is behind it. */
+const BOTTOM_FADE = 'linear-gradient(to bottom, #000 90%, transparent 100%)'
+const MEDIA_STYLE = {
+  animation: 'mediaIn 1s cubic-bezier(.22,1,.36,1) both',
+  maskImage: BOTTOM_FADE,
+  WebkitMaskImage: BOTTOM_FADE,
+}
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max)

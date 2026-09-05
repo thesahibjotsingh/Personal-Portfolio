@@ -10,6 +10,8 @@
   --color-muted: #9b9b9b;
   --color-dim: #7a7a7a;
   --color-hairline: rgba(255, 255, 255, 0.09);
+  /* official WhatsApp brand green */
+  --wa-green: #25d366;
 
   --font-display: "Playfair Display", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -201,6 +203,67 @@
     color: var(--color-void);
   }
 
+  /* ALTERNATE — fully-filled green WhatsApp button. Uncomment this block (and
+     comment out the .btn-whatsapp rules below) to swap treatments.
+     Note: filled green outranks the crimson primary visually — "View My Work"
+     stops reading as the primary action.
+  .btn-whatsapp {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--wa-green);
+    border-color: transparent;
+    color: #0a0a0a;
+  }
+  .btn-whatsapp svg { color: #0a0a0a; }
+  */
+
+  /* Outlined by default so the crimson primary keeps the louder voice. The
+     label stays off-white — green text on black at this size sits under a
+     comfortable reading contrast — and only the glyph carries the brand green. */
+  .btn-whatsapp {
+    position: relative;
+    overflow: hidden;
+    border-color: var(--wa-green);
+    color: var(--color-ivory);
+    transition:
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease;
+  }
+  .btn-whatsapp svg {
+    color: var(--wa-green);
+    transition: color 200ms ease;
+  }
+  .btn-whatsapp:hover,
+  .btn-whatsapp:focus-visible {
+    background-color: var(--wa-green);
+    color: #0a0a0a;
+  }
+  .btn-whatsapp:hover svg,
+  .btn-whatsapp:focus-visible svg {
+    color: #0a0a0a;
+  }
+
+  /* Occasional glint, not a running banner: the sweep occupies the last fifth
+     of a 5s cycle and idles off-canvas for the rest. */
+  .btn-whatsapp::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 60%;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.13) 50%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+    animation: waShine 5s ease-in-out infinite;
+  }
+
   input[type='text'],
   input[type='email'],
   textarea,
@@ -276,8 +339,10 @@
     opacity: 0;
     transform: scale(1.04);
   }
+  /* settles at 0.9, not 1 — the animation runs with fill-mode: both, so this
+     end value is what actually holds and an opacity class here would lose */
   to {
-    opacity: 1;
+    opacity: 0.9;
     transform: scale(1);
   }
 }
@@ -302,9 +367,24 @@
   }
 }
 
+@keyframes waShine {
+  0%,
+  80% {
+    transform: translateX(-170%);
+  }
+  100% {
+    transform: translateX(280%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .btn-whatsapp::after {
+    animation: none;
+    opacity: 0;
   }
 
   *,

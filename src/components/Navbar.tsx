@@ -11,8 +11,12 @@ const COMPACT_AFTER = 80
 
 const WORDMARK_FULL = 'clamp(2.25rem, 3.5vw, 3.5rem)'
 const WORDMARK_COMPACT = 'clamp(1.58rem, 2.45vw, 2.45rem)'
-const TAGLINE_FULL = 'clamp(0.62rem, 0.8vw, 0.8rem)'
-const TAGLINE_COMPACT = 'clamp(0.5rem, 0.58vw, 0.58rem)'
+/* Sized so the tagline's rendered width sits just under the wordmark's, making
+   the pair read as one lockup rather than a wide bar hanging off a narrow word.
+   "Saheb" in Dancing Script is only ~114px at full size, so this has to stay
+   small — the tracking below was pulled in from 0.3em for the same reason. */
+const TAGLINE_FULL = 'clamp(0.4rem, 0.52vw, 0.52rem)'
+const TAGLINE_COMPACT = 'clamp(0.32rem, 0.37vw, 0.37rem)'
 
 export default function Navbar() {
   const navRef = useRef<HTMLElement>(null)
@@ -70,7 +74,7 @@ export default function Navbar() {
               Saheb
             </span>
             <span
-              className="mt-1 font-sans uppercase leading-none tracking-[0.3em] text-dim"
+              className="mt-1 font-sans uppercase leading-none tracking-[0.16em] text-dim"
               style={{
                 fontSize: compact ? TAGLINE_COMPACT : TAGLINE_FULL,
                 transition: 'font-size 250ms ease',
