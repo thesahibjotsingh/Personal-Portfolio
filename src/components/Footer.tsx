@@ -2,9 +2,9 @@ import { CONFIG } from '../lib/config'
 
 export default function Footer() {
   return (
-    /* tighter seam: the footer is only ~81px tall, so the default 230px fade
-       would never complete and would leave it a uniformly lifted block */
-    <footer className="section-seam px-6 py-8 [--seam-end:68px] [--seam-peak:26px] md:px-8">
+    /* same hairline the navbar carries on its underside, so the page opens and
+       closes on an identical rule */
+    <footer className="border-t border-hairline px-6 py-8 md:px-8">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
         <p className="font-mono text-[11px] text-dim">
           © {new Date().getFullYear()} {CONFIG.name}. Built by hand.

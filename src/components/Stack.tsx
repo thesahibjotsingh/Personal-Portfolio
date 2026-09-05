@@ -27,7 +27,7 @@ const STACK_ITEMS = [
 
 export default function Stack() {
   return (
-    <section id="stack" className="section-seam px-6 py-20 md:px-8 md:py-24">
+    <section id="stack" className="px-6 py-10 md:px-8 md:py-12">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>The Toolbench</SectionLabel>
 
