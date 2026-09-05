@@ -28,6 +28,11 @@ export default function HeroMedia() {
   const [canScrub, setCanScrub] = useState(
     () => window.matchMedia(FINE_POINTER).matches,
   )
+  /* iOS Low Power Mode refuses autoplay even for muted inline video, and then
+     paints its own play badge over the clip. Swap to the still instead: the
+     badge is unreachable behind pointer-events-none, and a phone in Low Power
+     Mode has been told to do less, which a static image honours. */
+  const [playbackBlocked, setPlaybackBlocked] = useState(false)
 
   useEffect(() => {
     const motion = window.matchMedia(REDUCED_MOTION)
@@ -54,15 +59,22 @@ export default function HeroMedia() {
     const video = videoRef.current
     if (!video) return
 
+    let cancelled = false
+
     const tryPlay = () => {
-      video.play().catch(() => {
-        /* blocked — the poster stays, which is a fine resting state */
-      })
+      video
+        .play()
+        .catch(() => {
+          if (!cancelled) setPlaybackBlocked(true)
+        })
     }
 
     tryPlay()
     video.addEventListener('canplay', tryPlay)
-    return () => video.removeEventListener('canplay', tryPlay)
+    return () => {
+      cancelled = true
+      video.removeEventListener('canplay', tryPlay)
+    }
   }, [reducedMotion, canScrub])
 
   useEffect(() => {
@@ -123,7 +135,7 @@ export default function HeroMedia() {
     /* Desktop: the box starts at 46% so the figure is scaled down to clear the
        copy column on narrower desktops rather than sitting behind the text. */
     <div className="pointer-events-none relative order-2 h-[46svh] w-full overflow-hidden bg-void lg:absolute lg:bottom-0 lg:left-[46%] lg:right-0 lg:top-[73px] lg:z-0 lg:h-auto lg:w-auto lg:order-none">
-      {reducedMotion ? (
+      {reducedMotion || playbackBlocked ? (
         <img src={statueStill} alt="" className={MEDIA_CLASSES} style={MEDIA_STYLE} />
       ) : (
         /* Cursor-scrubbed with a mouse; a plain loop on touch. */
