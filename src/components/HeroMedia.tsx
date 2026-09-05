@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import mannequinStill from '../assets/mannequin-poster.jpg'
-import mannequinClip from '../assets/mannequin.mp4'
+import statueStill from '../assets/statue-poster.jpg'
+import statueClip from '../assets/statue.mp4'
 
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
 const FINE_POINTER = '(pointer: fine)'
@@ -8,10 +8,11 @@ const FINE_POINTER = '(pointer: fine)'
 /* How much of the clip a full sweep across the viewport scrubs through. */
 const SENSITIVITY = 0.8
 
-/* Anchored to the top on desktop: in a short, wide window object-cover crops
-   vertically, and centring that crop takes the mannequin's head off. */
-const MEDIA_CLASSES =
-  'h-full w-full object-cover object-[68%_center] lg:object-[right_top]'
+/* object-contain, not cover: this is a complete figure on a plinth, so any
+   cover crop takes off the head or the feet. The clip's background is exactly
+   #000 — the same as --color-void — so the letterboxing contain leaves behind
+   is invisible against the page. */
+const MEDIA_CLASSES = 'h-full w-full object-contain object-center lg:object-right'
 const MEDIA_STYLE = { animation: 'mediaIn 1s cubic-bezier(.22,1,.36,1) both' }
 
 const clamp = (value: number, min: number, max: number) =>
@@ -41,6 +42,30 @@ export default function HeroMedia() {
       pointer.removeEventListener('change', onPointer)
     }
   }, [])
+
+  /* `autoPlay` only applies at mount, so a pointer-type change mid-session
+     would leave the clip frozen. Drive playback directly instead. */
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || reducedMotion) return
+
+    if (canScrub) {
+      video.pause()
+      return
+    }
+
+    /* Retry on canplay too: a play() issued before the clip has data is
+       rejected, which on a slow connection would strand the poster. */
+    const tryPlay = () => {
+      video.play().catch(() => {
+        /* still blocked — the poster stays, which is a fine resting state */
+      })
+    }
+
+    tryPlay()
+    video.addEventListener('canplay', tryPlay)
+    return () => video.removeEventListener('canplay', tryPlay)
+  }, [reducedMotion, canScrub])
 
   useEffect(() => {
     if (reducedMotion || !canScrub) return
@@ -97,14 +122,16 @@ export default function HeroMedia() {
   }, [reducedMotion, canScrub])
 
   return (
-    <div className="pointer-events-none relative order-2 h-[46svh] w-full overflow-hidden bg-void lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-[73px] lg:z-0 lg:h-auto lg:order-none">
+    /* Desktop: the box starts at 46% so the figure is scaled down to clear the
+       copy column on narrower desktops rather than sitting behind the text. */
+    <div className="pointer-events-none relative order-2 h-[46svh] w-full overflow-hidden bg-void lg:absolute lg:bottom-0 lg:left-[46%] lg:right-0 lg:top-[73px] lg:z-0 lg:h-auto lg:w-auto lg:order-none">
       {reducedMotion ? (
-        <img src={mannequinStill} alt="" className={MEDIA_CLASSES} style={MEDIA_STYLE} />
+        <img src={statueStill} alt="" className={MEDIA_CLASSES} style={MEDIA_STYLE} />
       ) : (
         <video
           ref={videoRef}
-          src={mannequinClip}
-          poster={mannequinStill}
+          src={statueClip}
+          poster={statueStill}
           autoPlay={!canScrub}
           loop={!canScrub}
           muted
@@ -116,12 +143,10 @@ export default function HeroMedia() {
       )}
 
       {/* stacked layout: fade the band's top edge into the copy above it */}
-      <div className="absolute inset-0 bg-gradient-to-b from-void to-30% to-transparent lg:hidden" />
+      <div className="absolute inset-0 bg-gradient-to-b from-void to-25% to-transparent lg:hidden" />
 
-      {/* full-bleed layout: hold the left column dark enough to read on */}
-      <div className="absolute inset-0 hidden bg-gradient-to-r from-void via-void/70 to-45% to-transparent lg:block" />
-
-      <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-void to-transparent" />
+      {/* full-bleed layout: soften the figure's left edge toward the copy */}
+      <div className="absolute inset-0 hidden bg-gradient-to-r from-void to-30% to-transparent lg:block" />
     </div>
   )
 }
