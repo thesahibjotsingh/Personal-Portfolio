@@ -67,7 +67,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="border-t border-hairline px-6 py-24 md:px-8 md:py-32"
+      className="section-seam px-6 py-24 md:px-8 md:py-32"
     >
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>Get In Touch</SectionLabel>
