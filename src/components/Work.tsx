@@ -36,7 +36,10 @@ const COMPACT_STUDIES = [
 
 export default function Work() {
   return (
-    <section id="work" className="px-6 py-14 md:px-8 md:py-16">
+    /* lg:pt-[24svh] — the hero is 78svh, so 24 more clears the fold and keeps
+       the first desktop screen to the hero alone. In svh rather than px so it
+       holds at any window height. Desktop only; phones keep the tight gap. */
+    <section id="work" className="px-6 py-14 md:px-8 md:py-16 lg:pt-[24svh]">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>Featured Work</SectionLabel>
 
