@@ -43,28 +43,58 @@ export default function HeroMedia() {
     }
   }, [])
 
-  /* `autoPlay` only applies at mount, so a pointer-type change mid-session
-     would leave the clip frozen. Drive playback directly instead. */
+  /* Touch has no cursor, so scroll drives the clip instead — the same
+     scrub, mapped onto the gesture the device actually has. */
   useEffect(() => {
+    if (reducedMotion || canScrub) return
     const video = videoRef.current
-    if (!video || reducedMotion) return
+    const section = video?.closest('section')
+    if (!video || !section) return
 
-    if (canScrub) {
-      video.pause()
-      return
+    let frame = 0
+    let targetTime = 0
+    let seeking = false
+
+    const sync = () => {
+      frame = 0
+      if (!video.duration || Number.isNaN(video.duration)) return
+
+      const travel = section.offsetHeight
+      if (travel <= 0) return
+
+      const progress = clamp(window.scrollY / travel, 0, 1)
+      targetTime = progress * video.duration
+
+      if (!seeking) {
+        seeking = true
+        video.currentTime = targetTime
+      }
     }
 
-    /* Retry on canplay too: a play() issued before the clip has data is
-       rejected, which on a slow connection would strand the poster. */
-    const tryPlay = () => {
-      video.play().catch(() => {
-        /* still blocked — the poster stays, which is a fine resting state */
-      })
+    const onScroll = () => {
+      if (frame) return
+      frame = requestAnimationFrame(sync)
     }
 
-    tryPlay()
-    video.addEventListener('canplay', tryPlay)
-    return () => video.removeEventListener('canplay', tryPlay)
+    const onSeeked = () => {
+      if (Math.abs(video.currentTime - targetTime) > 0.01) {
+        video.currentTime = targetTime
+      } else {
+        seeking = false
+      }
+    }
+
+    video.addEventListener('seeked', onSeeked)
+    video.addEventListener('loadedmetadata', sync)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    sync()
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame)
+      video.removeEventListener('seeked', onSeeked)
+      video.removeEventListener('loadedmetadata', sync)
+      window.removeEventListener('scroll', onScroll)
+    }
   }, [reducedMotion, canScrub])
 
   useEffect(() => {
@@ -128,12 +158,11 @@ export default function HeroMedia() {
       {reducedMotion ? (
         <img src={statueStill} alt="" className={MEDIA_CLASSES} style={MEDIA_STYLE} />
       ) : (
+        /* Never self-playing: the cursor drives it on desktop, scroll on touch. */
         <video
           ref={videoRef}
           src={statueClip}
           poster={statueStill}
-          autoPlay={!canScrub}
-          loop={!canScrub}
           muted
           playsInline
           preload="auto"

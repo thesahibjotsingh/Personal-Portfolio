@@ -20,7 +20,8 @@ export default function Hero() {
     >
       <HeroMedia />
 
-      <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-10 md:px-8 lg:min-h-[calc(100svh-72px)] lg:py-0 lg:pl-[6vw] lg:pr-0">
+      {/* tighter vertical rhythm on phones so the statue reaches the first screen */}
+      <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-6 md:px-8 md:py-10 lg:min-h-[calc(100svh-72px)] lg:py-0 lg:pl-[6vw] lg:pr-0">
         <div className="w-full lg:w-[46%]">
           <p
             className="hero-step font-mono text-[0.8rem] uppercase tracking-[0.2em] text-dim"
@@ -30,7 +31,7 @@ export default function Hero() {
           </p>
 
           <h1
-            className="hero-step mt-5 font-display text-[clamp(2.5rem,5.2vw,4rem)] font-normal leading-[1.1] tracking-[-0.02em] text-ivory"
+            className="hero-step mt-4 font-display text-[clamp(2.25rem,5.2vw,4rem)] font-normal leading-[1.1] tracking-[-0.02em] text-ivory md:mt-5"
             style={step(1)}
           >
             Saheb,{' '}
@@ -47,7 +48,7 @@ export default function Hero() {
           </h1>
 
           <p
-            className="hero-step mt-5 max-w-[46ch] text-[1.0625rem] leading-[1.75] text-muted"
+            className="hero-step mt-4 max-w-[46ch] text-[1.0625rem] leading-[1.6] text-muted md:mt-5 md:leading-[1.75]"
             style={step(2)}
           >
             Full Stack Developer specializing in Firebase-powered web applications. I
@@ -55,7 +56,7 @@ export default function Hero() {
           </p>
 
           <div
-            className="hero-step mt-8 flex flex-wrap items-center gap-7"
+            className="hero-step mt-6 flex flex-wrap items-center gap-7 md:mt-8"
             style={step(3)}
           >
             <a
@@ -68,7 +69,9 @@ export default function Hero() {
 
             <a
               href="#work"
-              className="group inline-flex items-center gap-[0.6rem] text-[0.9rem] text-muted transition-colors hover:text-carnation"
+              /* hidden on phones: it wraps to a second line there, and scrolling
+                 needs no prompt on touch */
+              className="group hidden items-center gap-[0.6rem] text-[0.9rem] text-muted transition-colors hover:text-carnation sm:inline-flex"
             >
               Scroll to explore
               <ArrowDown />
@@ -76,7 +79,7 @@ export default function Hero() {
           </div>
 
           <p
-            className="hero-step mt-10 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim"
+            className="hero-step mt-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim md:mt-10"
             style={step(4)}
           >
             <span
