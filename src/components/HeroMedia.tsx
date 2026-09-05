@@ -43,87 +43,26 @@ export default function HeroMedia() {
     }
   }, [])
 
-  /* Touch has no cursor, so scroll drives the clip instead — the same
-     scrub, mapped onto the gesture the device actually has. */
+  /* Touch just loops the clip.
+     Scroll-scrubbing was tried here and reverted: iOS does not reliably fire
+     `seeked` on a paused video, so the in-flight guard latched and the statue
+     froze on frame one. Seeking a paused video is unreliable enough on iOS
+     that doing this properly needs a decoded frame sequence on a canvas, not
+     a <video>. Not worth that weight for a 3-second loop. */
   useEffect(() => {
     if (reducedMotion || canScrub) return
     const video = videoRef.current
-    const section = video?.closest('section')
-    if (!video || !section) return
+    if (!video) return
 
-    let frame = 0
-    let targetTime = 0
-    let seeking = false
-    let cancelled = false
-    let detach = () => {}
-
-    const sync = () => {
-      frame = 0
-      if (!video.duration || Number.isNaN(video.duration)) return
-
-      const travel = section.offsetHeight
-      if (travel <= 0) return
-
-      const progress = clamp(window.scrollY / travel, 0, 1)
-      targetTime = progress * video.duration
-
-      /* skip no-op seeks; on iOS every seek costs a repaint */
-      if (!seeking && Math.abs(video.currentTime - targetTime) > 0.02) {
-        seeking = true
-        video.currentTime = targetTime
-      }
-    }
-
-    const onScroll = () => {
-      if (frame) return
-      frame = requestAnimationFrame(sync)
-    }
-
-    const onSeeked = () => {
-      if (Math.abs(video.currentTime - targetTime) > 0.01) {
-        video.currentTime = targetTime
-      } else {
-        seeking = false
-      }
-    }
-
-    const takeScrollControl = () => {
-      video.addEventListener('seeked', onSeeked)
-      window.addEventListener('scroll', onScroll, { passive: true })
-      sync()
-      detach = () => {
-        video.removeEventListener('seeked', onSeeked)
-        window.removeEventListener('scroll', onScroll)
-      }
-    }
-
-    /* iOS will not paint a seeked frame on a video that has never played — it
-       drops the poster and renders nothing. Play one frame and pause before
-       taking scroll control; if playback is blocked outright, loop instead so
-       the hero is never a black rectangle. */
-    video
-      .play()
-      .then(() => {
-        if (cancelled) return
-        /* let one frame actually reach the compositor before pausing —
-           play() resolving is not by itself proof anything was painted */
-        requestAnimationFrame(() => {
-          if (cancelled) return
-          video.pause()
-          takeScrollControl()
-        })
+    const tryPlay = () => {
+      video.play().catch(() => {
+        /* blocked — the poster stays, which is a fine resting state */
       })
-      .catch(() => {
-        if (cancelled) return
-        video.loop = true
-        video.play().catch(() => {})
-      })
-
-    return () => {
-      cancelled = true
-      if (frame) cancelAnimationFrame(frame)
-      detach()
     }
+
+    tryPlay()
+    video.addEventListener('canplay', tryPlay)
+    return () => video.removeEventListener('canplay', tryPlay)
   }, [reducedMotion, canScrub])
 
   useEffect(() => {
@@ -187,11 +126,13 @@ export default function HeroMedia() {
       {reducedMotion ? (
         <img src={statueStill} alt="" className={MEDIA_CLASSES} style={MEDIA_STYLE} />
       ) : (
-        /* Never self-playing: the cursor drives it on desktop, scroll on touch. */
+        /* Cursor-scrubbed with a mouse; a plain loop on touch. */
         <video
           ref={videoRef}
           src={statueClip}
           poster={statueStill}
+          autoPlay={!canScrub}
+          loop={!canScrub}
           muted
           playsInline
           preload="auto"
