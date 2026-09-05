@@ -34,9 +34,16 @@
     min-height: 100%;
   }
 
-  /* clear the fixed nav so anchor links don't land under it */
+  /* clear the fixed nav so anchor links don't land under it. Navbar measures
+     itself into --nav-h; the fallback covers first paint. */
   section[id] {
-    scroll-margin-top: 74px;
+    scroll-margin-top: var(--nav-h, 74px);
+  }
+
+  /* the browser default ring is all but invisible on a near-black ground */
+  :focus-visible {
+    outline: 2px solid var(--color-carnation);
+    outline-offset: 2px;
   }
 
   body {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const NAV_LINKS = [
   { label: 'Work', href: '#work' },
@@ -6,29 +6,76 @@ const NAV_LINKS = [
   { label: 'Contact', href: '#contact' },
 ]
 
+/* The lockup shrinks to ~70% past this scroll depth. */
+const COMPACT_AFTER = 80
+
+const WORDMARK_FULL = 'clamp(2.25rem, 3.5vw, 3.5rem)'
+const WORDMARK_COMPACT = 'clamp(1.58rem, 2.45vw, 2.45rem)'
+const TAGLINE_FULL = 'clamp(0.62rem, 0.8vw, 0.8rem)'
+const TAGLINE_COMPACT = 'clamp(0.5rem, 0.58vw, 0.58rem)'
+
 export default function Navbar() {
+  const navRef = useRef<HTMLElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [compact, setCompact] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8)
+    const onScroll = () => {
+      const y = window.scrollY
+      setScrolled(y > 8)
+      setCompact(y > COMPACT_AFTER)
+    }
+    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  /* Publish the *expanded* height only. The hero's top offset reads this, and
+     letting it track the shrunken header would shift the whole page mid-scroll. */
+  useEffect(() => {
+    const nav = navRef.current
+    if (!nav || compact) return
+
+    const publish = () => {
+      document.documentElement.style.setProperty(
+        '--nav-h',
+        `${Math.round(nav.getBoundingClientRect().height)}px`,
+      )
+    }
+
+    publish()
+    const observer = new ResizeObserver(publish)
+    observer.observe(nav)
+    return () => observer.disconnect()
+  }, [compact])
+
   return (
     <>
       <nav
+        ref={navRef}
         className={`fixed inset-x-0 top-0 z-60 border-b border-hairline transition-colors duration-300 ${
           scrolled ? 'bg-void/85 backdrop-blur-md' : 'bg-void'
         }`}
       >
-        <div className="flex items-center justify-between px-6 py-3 md:px-8 lg:px-[6vw]">
-          <a href="#top" className="flex flex-col leading-none">
-            <span className="font-script text-[2rem] leading-[1.25] font-bold text-carnation">
+        <div className="flex items-center justify-between gap-4 px-6 py-4 md:px-8 md:py-5 lg:px-[6vw]">
+          <a href="#top" aria-label="Saheb — back to top" className="flex flex-col leading-none">
+            <span
+              className="font-script font-bold leading-[0.9] text-carnation"
+              style={{
+                fontSize: compact ? WORDMARK_COMPACT : WORDMARK_FULL,
+                transition: 'font-size 250ms ease',
+              }}
+            >
               Saheb
             </span>
-            <span className="font-sans text-[8.5px] uppercase tracking-[0.28em] text-dim">
+            <span
+              className="mt-1 font-sans uppercase leading-none tracking-[0.3em] text-dim"
+              style={{
+                fontSize: compact ? TAGLINE_COMPACT : TAGLINE_FULL,
+                transition: 'font-size 250ms ease',
+              }}
+            >
               Code. Craft. Scale.
             </span>
           </a>

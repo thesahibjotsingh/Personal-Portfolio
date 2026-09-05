@@ -134,7 +134,7 @@ export default function HeroMedia() {
   return (
     /* Desktop: the box starts at 46% so the figure is scaled down to clear the
        copy column on narrower desktops rather than sitting behind the text. */
-    <div className="pointer-events-none relative order-2 h-[46svh] w-full overflow-hidden bg-void lg:absolute lg:bottom-0 lg:left-[46%] lg:right-0 lg:top-[73px] lg:z-0 lg:h-auto lg:w-auto lg:order-none">
+    <div className="pointer-events-none relative order-2 h-[46svh] w-full overflow-hidden bg-void lg:absolute lg:bottom-0 lg:left-[46%] lg:right-0 lg:top-[var(--nav-h,73px)] lg:z-0 lg:h-auto lg:w-auto lg:order-none">
       {reducedMotion || playbackBlocked ? (
         <img src={statueStill} alt="" className={MEDIA_CLASSES} style={MEDIA_STYLE} />
       ) : (

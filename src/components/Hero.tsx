@@ -1,7 +1,18 @@
 import { useEffect, useState } from 'react'
 import HeroMedia from './HeroMedia'
+import Icon from './Icon'
+import { CONFIG } from '../lib/config'
 
 const step = (i: number) => ({ transitionDelay: `${140 + i * 110}ms` })
+
+const WHATSAPP_HREF = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(
+  "Hi Saheb, I'd like to discuss a project.",
+)}`
+
+/* Buttons share every dimension so the pair reads as a matched set; only
+   border and text colour separate primary from secondary. */
+const BUTTON_BASE =
+  'inline-flex items-center justify-center gap-2 rounded-[3px] border px-7 py-[0.9rem] text-[0.9375rem] font-medium transition-colors duration-200 max-[479px]:w-full'
 
 export default function Hero() {
   const [entered, setEntered] = useState(false)
@@ -14,73 +25,20 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className={`relative flex min-h-svh flex-col overflow-hidden pt-[72px] lg:block ${
+      /* 88svh on desktop, not 100: the next section should peek above the fold
+         so the hero doesn't read as a dead-end screen */
+      className={`relative flex min-h-svh flex-col overflow-hidden pt-[var(--nav-h,73px)] lg:block lg:min-h-[88svh] ${
         entered ? 'hero-in' : ''
       }`}
     >
       <HeroMedia />
 
       {/* tighter vertical rhythm on phones so the statue reaches the first screen */}
-      <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-6 md:px-8 md:py-10 lg:min-h-[calc(100svh-72px)] lg:py-0 lg:pl-[6vw] lg:pr-0">
+      <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-6 md:px-8 md:py-10 lg:min-h-[calc(88svh-var(--nav-h,73px))] lg:py-0 lg:pl-[6vw] lg:pr-0">
         <div className="w-full lg:w-[46%]">
           <p
-            className="hero-step font-mono text-[0.8rem] uppercase tracking-[0.2em] text-dim"
+            className="hero-step flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim"
             style={step(0)}
-          >
-            Hello, I'm
-          </p>
-
-          <h1
-            className="hero-step mt-4 font-display text-[clamp(2.25rem,5.2vw,4rem)] font-normal leading-[1.1] tracking-[-0.02em] text-ivory md:mt-5"
-            style={step(1)}
-          >
-            Saheb,{' '}
-            <em className="italic text-carnation-deep">
-              I build digital{' '}
-              {/* set larger so the word fills its line out to the right edge of
-                  "digital" above and "impact" below */}
-              <span className="text-[1.25em] leading-[0.9] lg:text-[1.55em] lg:leading-[0.85] 2xl:text-[1.9em] 2xl:leading-[0.8]">
-                experiences
-              </span>
-            </em>
-            <br />
-            that deliver real impact<span className="text-carnation-deep">.</span>
-          </h1>
-
-          <p
-            className="hero-step mt-4 max-w-[46ch] text-[1.0625rem] leading-[1.6] text-muted md:mt-5 md:leading-[1.75]"
-            style={step(2)}
-          >
-            Full Stack Developer specializing in Firebase-powered web applications. I
-            help businesses streamline operations, engage customers, and grow online.
-          </p>
-
-          <div
-            className="hero-step mt-6 flex flex-wrap items-center gap-7 md:mt-8"
-            style={step(3)}
-          >
-            <a
-              href="#work"
-              className="inline-flex items-center gap-[0.6rem] rounded-[3px] border border-carnation px-7 py-[0.9rem] text-[0.9375rem] font-medium text-carnation transition-colors hover:bg-carnation hover:text-void"
-            >
-              View My Work
-              <ArrowUpRight />
-            </a>
-
-            <a
-              href="#work"
-              /* hidden on phones: it wraps to a second line there, and scrolling
-                 needs no prompt on touch */
-              className="group hidden items-center gap-[0.6rem] text-[0.9rem] text-muted transition-colors hover:text-carnation sm:inline-flex"
-            >
-              Scroll to explore
-              <ArrowDown />
-            </a>
-          </div>
-
-          <p
-            className="hero-step mt-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim md:mt-10"
-            style={step(4)}
           >
             <span
               className="inline-block h-2 w-2 rounded-full bg-carnation"
@@ -89,6 +47,56 @@ export default function Hero() {
             />
             Available for new projects
           </p>
+
+          <p
+            className="hero-step mt-5 font-mono text-[0.8rem] uppercase tracking-[0.2em] text-dim"
+            style={step(1)}
+          >
+            Hello, I'm Saheb.
+          </p>
+
+          {/* Previous treatment, kept so the all-caps version can be reverted:
+              <h1 className="... font-display text-[clamp(2.25rem,5.2vw,4rem)] leading-[1.1] tracking-[-0.02em]">
+                Saheb, <em className="italic text-carnation-deep">I build digital
+                <span className="text-[1.25em] ...">experiences</span></em><br />
+                that deliver real impact<span className="text-carnation-deep">.</span>
+              </h1> */}
+          <h1
+            className="hero-step mt-4 font-sans text-[clamp(1.95rem,4vw,3.15rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.02em] text-ivory md:mt-5"
+            style={step(2)}
+          >
+            Websites that make your business{' '}
+            <span className="text-carnation">impossible to ignore.</span>
+          </h1>
+
+          <p
+            className="hero-step mt-5 max-w-[46ch] text-[1.0625rem] leading-[1.6] text-muted md:leading-[1.75]"
+            style={step(3)}
+          >
+            I engineer platforms for ambitious brands that establish absolute trust,
+            generate leads, and make your competition look ancient.
+          </p>
+
+          <div className="hero-step mt-8 flex flex-wrap items-center gap-4" style={step(4)}>
+            <a
+              href="#work"
+              className={`${BUTTON_BASE} border-carnation text-carnation hover:bg-carnation hover:text-void`}
+            >
+              View My Work
+              <ArrowUpRight />
+            </a>
+
+            <a
+              href={WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Book a call with Saheb on WhatsApp"
+              className={`${BUTTON_BASE} border-white/25 text-ivory hover:border-carnation hover:text-carnation`}
+            >
+              <Icon name="whatsapp" className="h-[1.1em] w-[1.1em] shrink-0" />
+              Book a Call
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -109,25 +117,6 @@ function ArrowUpRight() {
       aria-hidden="true"
     >
       <path d="M7 17 17 7M9 7h8v8" />
-    </svg>
-  )
-}
-
-function ArrowDown() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      style={{ animation: 'bob 2s ease-in-out infinite' }}
-    >
-      <path d="M12 5v14M19 12l-7 7-7-7" />
     </svg>
   )
 }
