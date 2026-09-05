@@ -3,17 +3,16 @@ export const CONFIG = {
   wordmark: 'Saheb',
   tagline: 'Code. Craft. Scale.',
   role: 'Full Stack Developer',
-  /* placeholder — swap for a real inbox before this is presented as live */
-  email: 'studio@saheb.dev',
-  /* real — used for the WhatsApp quick-link (wa.me) */
+  /* the inbox the contact form also delivers to */
+  email: 'in.sahibjotsingh@gmail.com',
+  /* used for the WhatsApp quick-link (wa.me) */
   whatsapp: '919877636100',
-  /* placeholders — leave as '#' until real profiles exist rather than
-     pointing them at invented destinations (PRODUCT.md principle #4) */
-  socials: [
-    { label: 'GitHub', href: '#' },
-    { label: 'LinkedIn', href: '#' },
-    { label: 'X', href: '#' },
-  ],
+  /* Empty on purpose. These were three dead '#' links; a link that goes
+     nowhere reads worse than no link on a site whose argument is that the
+     work gets finished. Add an entry here and the icon returns — `Icon`
+     still carries github/linkedin/x artwork ready for it.
+     Verified if GitHub is ever wanted: https://github.com/thesahibjotsingh */
+  socials: [] as { label: string; href: string }[],
 } as const
 
 /* EmailJS keys are publishable by design — the public key is meant to ship
