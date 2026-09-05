@@ -54,6 +54,8 @@ export default function HeroMedia() {
     let frame = 0
     let targetTime = 0
     let seeking = false
+    let cancelled = false
+    let detach = () => {}
 
     const sync = () => {
       frame = 0
@@ -65,7 +67,8 @@ export default function HeroMedia() {
       const progress = clamp(window.scrollY / travel, 0, 1)
       targetTime = progress * video.duration
 
-      if (!seeking) {
+      /* skip no-op seeks; on iOS every seek costs a repaint */
+      if (!seeking && Math.abs(video.currentTime - targetTime) > 0.02) {
         seeking = true
         video.currentTime = targetTime
       }
@@ -84,16 +87,42 @@ export default function HeroMedia() {
       }
     }
 
-    video.addEventListener('seeked', onSeeked)
-    video.addEventListener('loadedmetadata', sync)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    sync()
+    const takeScrollControl = () => {
+      video.addEventListener('seeked', onSeeked)
+      window.addEventListener('scroll', onScroll, { passive: true })
+      sync()
+      detach = () => {
+        video.removeEventListener('seeked', onSeeked)
+        window.removeEventListener('scroll', onScroll)
+      }
+    }
+
+    /* iOS will not paint a seeked frame on a video that has never played — it
+       drops the poster and renders nothing. Play one frame and pause before
+       taking scroll control; if playback is blocked outright, loop instead so
+       the hero is never a black rectangle. */
+    video
+      .play()
+      .then(() => {
+        if (cancelled) return
+        /* let one frame actually reach the compositor before pausing —
+           play() resolving is not by itself proof anything was painted */
+        requestAnimationFrame(() => {
+          if (cancelled) return
+          video.pause()
+          takeScrollControl()
+        })
+      })
+      .catch(() => {
+        if (cancelled) return
+        video.loop = true
+        video.play().catch(() => {})
+      })
 
     return () => {
+      cancelled = true
       if (frame) cancelAnimationFrame(frame)
-      video.removeEventListener('seeked', onSeeked)
-      video.removeEventListener('loadedmetadata', sync)
-      window.removeEventListener('scroll', onScroll)
+      detach()
     }
   }, [reducedMotion, canScrub])
 
