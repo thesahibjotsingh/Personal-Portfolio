@@ -14,7 +14,11 @@ const SENSITIVITY = 0.8
    is invisible against the page. */
 /* Opacity is set by the mediaIn keyframe's end state (0.9), not a class here:
    the animation runs fill-mode both, so it wins over any static opacity. */
-const MEDIA_CLASSES = 'h-full w-full object-contain object-center lg:object-right'
+/* lg:max-h-[66svh] holds the statue at the size it had when the hero was
+   78svh. Without it, a full-height hero would scale it up by a third and it
+   would start competing with the headline rather than supporting it. */
+const MEDIA_CLASSES =
+  'h-full w-full object-contain object-center lg:max-h-[66svh] lg:object-right'
 
 /* Dissolve the pedestal into the background instead of letting the section
    boundary guillotine it. Masking the element (rather than overlaying black)
@@ -145,7 +149,9 @@ export default function HeroMedia() {
   return (
     /* Desktop: the box starts at 46% so the figure is scaled down to clear the
        copy column on narrower desktops rather than sitting behind the text. */
-    <div className="pointer-events-none relative order-2 h-[46svh] w-full overflow-hidden bg-void lg:absolute lg:bottom-0 lg:left-[46%] lg:right-0 lg:top-[var(--nav-h,73px)] lg:z-0 lg:h-auto lg:w-auto lg:order-none">
+    /* lg:flex + items-center centres the capped statue in the taller box,
+       rather than pinning it to the top and re-creating the gap underneath */
+    <div className="pointer-events-none relative order-2 h-[46svh] w-full overflow-hidden bg-void lg:absolute lg:bottom-0 lg:left-[46%] lg:right-0 lg:top-[var(--nav-h,73px)] lg:z-0 lg:flex lg:h-auto lg:w-auto lg:items-center lg:order-none">
       {reducedMotion || playbackBlocked ? (
         <img src={statueStill} alt="" className={MEDIA_CLASSES} style={MEDIA_STYLE} />
       ) : (

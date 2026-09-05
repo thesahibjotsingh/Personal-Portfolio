@@ -25,16 +25,18 @@ export default function Hero() {
   return (
     <section
       id="top"
-      /* 78svh on desktop, not 100: the next section should peek above the fold
-         so the hero doesn't read as a dead-end screen */
-      className={`relative flex min-h-svh flex-col overflow-hidden pt-[var(--nav-h,73px)] lg:block lg:min-h-[78svh] ${
+      /* Full height on desktop so the copy centres against the real screen.
+         At 78svh the hero ended 222px short of the fold and all that space
+         pooled underneath, leaving the composition top-heavy. The statue is
+         capped in HeroMedia so it doesn't grow into the extra room. */
+      className={`relative flex min-h-svh flex-col overflow-hidden pt-[var(--nav-h,73px)] lg:block lg:min-h-svh ${
         entered ? 'hero-in' : ''
       }`}
     >
       <HeroMedia />
 
       {/* tighter vertical rhythm on phones so the statue reaches the first screen */}
-      <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-6 md:px-8 md:py-10 lg:min-h-[calc(78svh-var(--nav-h,73px))] lg:py-0 lg:pl-[6vw] lg:pr-0">
+      <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-6 md:px-8 md:py-10 lg:min-h-[calc(100svh-var(--nav-h,73px))] lg:py-0 lg:pl-[6vw] lg:pr-0">
         <div className="w-full lg:w-[46%]">
           <p
             className="hero-step flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim"
