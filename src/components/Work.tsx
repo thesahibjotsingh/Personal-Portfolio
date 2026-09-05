@@ -36,7 +36,7 @@ const COMPACT_STUDIES = [
 
 export default function Work() {
   return (
-    <section id="work" className="border-t border-hairline px-6 py-24 md:px-8 md:py-32">
+    <section id="work" className="section-seam px-6 py-24 md:px-8 md:py-32">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>Featured Work</SectionLabel>
 
