@@ -12,7 +12,7 @@ const WHATSAPP_HREF = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponen
 /* Buttons share every dimension so the pair reads as a matched set; only
    border and text colour separate primary from secondary. */
 const BUTTON_BASE =
-  'inline-flex items-center justify-center gap-2 rounded-[3px] border px-7 py-[0.9rem] text-[0.9375rem] font-medium transition-colors duration-200 max-[479px]:w-full'
+  'inline-flex items-center justify-center gap-2 rounded-[3px] border px-7 py-[0.9rem] text-[0.9375rem] font-medium transition-colors duration-200 max-[479px]:w-full xl:px-8 xl:py-[1.05rem] xl:text-[1rem]'
 
 export default function Hero() {
   const [entered, setEntered] = useState(false)
@@ -51,7 +51,7 @@ export default function Hero() {
           </p>
 
           <p
-            className="hero-step mt-5 font-mono text-[0.8rem] uppercase tracking-[0.2em] text-dim"
+            className="hero-step mt-5 font-mono text-[0.8rem] uppercase tracking-[0.2em] text-dim xl:text-[0.875rem]"
             style={step(1)}
           >
             Hello, I'm Saheb.
@@ -64,23 +64,30 @@ export default function Hero() {
                 that deliver real impact<span className="text-carnation-deep">.</span>
               </h1> */}
           <h1
-            className="hero-step mt-4 font-sans text-[clamp(1.95rem,4vw,3.15rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.02em] text-ivory md:mt-5"
+            /* 3.5vw is the ceiling: the longest line measures 11.73x the font
+               size and the column is 43.2% of the viewport, so anything above
+               ~3.69vw pushes it past the column edge at every width. */
+            className="hero-step mt-4 font-sans text-[clamp(1.95rem,3.5vw,4.5rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.02em] text-ivory md:mt-5"
             style={step(2)}
           >
-            {/* Breaks are explicit above 768px so the lines ascend in length
-                (short, medium, longest) instead of wrapping long/short/longest.
-                text-wrap: balance would even them out and kill that shape.
-                Below 768px they collapse and the text wraps naturally. */}
+            {/* Breaks fire at 1400px, not 768: the copy column is 43% of the
+                viewport, so it only gets wide enough to hold "IMPOSSIBLE TO
+                IGNORE." on one line from ~1367px up. Firing them earlier made
+                every forced line wrap again — five ragged lines at 1024-1400.
+                Below that the text wraps naturally. text-wrap: balance is
+                deliberately avoided; it would even the lines out and kill the
+                ascending shape. */}
             Websites that{' '}
-            <br className="hidden md:inline" />
+            <br className="hidden min-[1400px]:inline" />
             make your business{' '}
-            <br className="hidden md:inline" />
+            <br className="hidden min-[1400px]:inline" />
             <span className="text-carnation">impossible to ignore.</span>
           </h1>
 
           <p
             /* 52ch, not 46: at 46 the last line orphaned "look ancient." */
-            className="hero-step mt-5 max-w-[52ch] text-[1.0625rem] leading-[1.6] text-muted md:leading-[1.75]"
+            /* max-w is in ch, so the measure scales with the font automatically */
+            className="hero-step mt-5 max-w-[52ch] text-[1.0625rem] leading-[1.6] text-muted md:leading-[1.75] xl:text-[1.1875rem]"
             style={step(3)}
           >
             I engineer platforms for ambitious brands that establish absolute trust,
