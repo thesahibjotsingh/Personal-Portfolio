@@ -1,13 +1,13 @@
 import Reveal from './Reveal'
 import SectionLabel from './SectionLabel'
-import firebaseLogo from '../assets/firebase.png'
-import firestoreLogo from '../assets/firestore.png'
-import javascriptLogo from '../assets/javascript.png'
-import html5Logo from '../assets/HTML5.png'
-import css3Logo from '../assets/CSS3_logo.png'
-import pwaLogo from '../assets/pwa.png'
-import emailjsLogo from '../assets/EmailJs.png'
-import cloudflareLogo from '../assets/Cloudflare.png'
+import firebaseLogo from '../assets/firebase.webp'
+import firestoreLogo from '../assets/firestore.webp'
+import javascriptLogo from '../assets/javascript.webp'
+import html5Logo from '../assets/HTML5.webp'
+import css3Logo from '../assets/CSS3_logo.webp'
+import pwaLogo from '../assets/pwa.webp'
+import emailjsLogo from '../assets/EmailJs.webp'
+import cloudflareLogo from '../assets/Cloudflare.webp'
 
 /* Every entry here has to be traceable to something actually shipped:
    Firebase/Firestore/JavaScript/PWA are tagged on the Cloud POS card,

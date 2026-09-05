@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import statueStill from '../assets/statue-poster.jpg'
+import statueStill from '../assets/statue-poster.webp'
 import statueClip from '../assets/statue.mp4'
 
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'

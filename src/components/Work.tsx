@@ -1,9 +1,9 @@
 import Reveal from './Reveal'
 import SectionLabel from './SectionLabel'
 import { useSpotlight } from '../hooks/useSpotlight'
-import demoPreview from '../assets/demo-preview.png'
-import crostaPreview from '../assets/crosta-preview.png'
-import barkatPreview from '../assets/barkat-preview.png'
+import demoPreview from '../assets/demo-preview.webp'
+import crostaPreview from '../assets/crosta-preview.webp'
+import barkatPreview from '../assets/barkat-preview.webp'
 
 /* Every card here is real shipped work, linked to its live site — see PRODUCT.md
    principle #1: no invented clients, metrics, or testimonials. */
