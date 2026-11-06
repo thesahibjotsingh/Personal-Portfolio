@@ -435,6 +435,33 @@
   }
 }
 
+/* hero "scroll" cue — a short rule with a red sweep running along it */
+.scroll-cue-line {
+  position: relative;
+  display: inline-block;
+  width: 2.5rem;
+  height: 1px;
+  overflow: hidden;
+  background: var(--color-hairline);
+}
+.scroll-cue-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-carnation);
+  transform: translateX(-100%);
+  animation: cueSlide 2.2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
+}
+@keyframes cueSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  60%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 /* project rows are anchor targets for the Work menu — clear the fixed nav */
 article[id] {
   /* panels are full-screen and pad themselves clear of the nav */
@@ -605,7 +632,7 @@ html.lenis {
   /* settles at 0.9, not 1 — the animation runs with fill-mode: both, so this
      end value is what actually holds and an opacity class here would lose */
   to {
-    opacity: 0.9;
+    opacity: 1;
     transform: scale(1);
   }
 }

@@ -18,7 +18,7 @@ const SENSITIVITY = 0.8
    78svh. Without it, a full-height hero would scale it up by a third and it
    would start competing with the headline rather than supporting it. */
 const MEDIA_CLASSES =
-  'h-full w-full object-contain object-center lg:max-h-[66svh] lg:object-right'
+  'h-full max-h-[86%] w-auto max-w-full object-contain object-center lg:max-h-full'
 
 /* Dissolve the pedestal into the background instead of letting the section
    boundary guillotine it. Masking the element (rather than overlaying black)
@@ -28,10 +28,9 @@ const MEDIA_STYLE = {
   animation: 'mediaIn 1s cubic-bezier(.22,1,.36,1) both',
   maskImage: BOTTOM_FADE,
   WebkitMaskImage: BOTTOM_FADE,
-  /* The clip's background is pure #000 but the page is now a tinted
-     near-black. `lighten` keeps the lighter statue as-is and lets the page
-     colour win everywhere the clip is black, so no box shows. */
-  mixBlendMode: 'lighten' as const,
+  /* Turns the clip's black background transparent (see the filter in the JSX
+     below), so the statue is a true cut-out that the headline can sit behind. */
+  filter: 'url(#statue-cutout)',
 }
 
 const clamp = (value: number, min: number, max: number) =>
@@ -151,11 +150,19 @@ export default function HeroMedia() {
   }, [reducedMotion, canScrub])
 
   return (
-    /* Desktop: the box starts at 46% so the figure is scaled down to clear the
-       copy column on narrower desktops rather than sitting behind the text. */
-    /* lg:flex + items-center centres the capped statue in the taller box,
-       rather than pinning it to the top and re-creating the gap underneath */
-    <div className="pointer-events-none relative order-2 h-[46svh] w-full overflow-hidden bg-void lg:absolute lg:bottom-0 lg:left-[46%] lg:right-0 lg:top-[var(--nav-h,73px)] lg:z-0 lg:flex lg:h-auto lg:w-auto lg:items-center lg:order-none">
+    <div className="pointer-events-none relative z-10 order-2 flex h-[46svh] items-end justify-center lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-[var(--nav-h,73px)] lg:order-none lg:h-auto lg:items-center lg:justify-end lg:pb-[5.5rem] lg:pr-[1.5vw]">
+      {/* Luminance becomes alpha: bright marble stays opaque, the black backdrop
+          (and compression noise near black) drops to nothing. Dark folds in the
+          marble sit well above the threshold, so the figure stays solid. */}
+      <svg width="0" height="0" className="absolute" aria-hidden="true">
+        <filter id="statue-cutout" colorInterpolationFilters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  6 6 6 0 -0.4"
+          />
+        </filter>
+      </svg>
+
       {reducedMotion || playbackBlocked ? (
         <img src={statueStill} alt="" className={MEDIA_CLASSES} style={MEDIA_STYLE} />
       ) : (
@@ -173,12 +180,6 @@ export default function HeroMedia() {
           style={MEDIA_STYLE}
         />
       )}
-
-      {/* stacked layout: fade the band's top edge into the copy above it */}
-      <div className="absolute inset-0 bg-gradient-to-b from-void to-25% to-transparent lg:hidden" />
-
-      {/* full-bleed layout: soften the figure's left edge toward the copy */}
-      <div className="absolute inset-0 hidden bg-gradient-to-r from-void to-30% to-transparent lg:block" />
     </div>
   )
 }
