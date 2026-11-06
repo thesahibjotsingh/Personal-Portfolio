@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { PROJECTS } from '../lib/projects'
+import { SERVICES, PILLARS, STACK_ITEMS } from '../lib/content'
+import { CONFIG } from '../lib/config'
 import StatusTag from './StatusTag'
 
 const NAV_LINKS = [
@@ -119,22 +121,17 @@ export default function Navbar() {
           </a>
 
           <div className="hidden items-center gap-10 min-[900px]:flex">
-            {NAV_LINKS.map((link) =>
-              link.label === 'Work' ? (
-                <WorkMenu key={link.label} link={link} isActive={active === 'work'} />
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  aria-current={active === link.href.slice(1) ? 'true' : undefined}
-                  className={`text-[0.9375rem] font-medium transition-colors hover:text-carnation ${
-                    active === link.href.slice(1) ? 'text-ivory' : 'text-muted'
-                  }`}
-                >
-                  {link.label}
-                </a>
-              ),
-            )}
+            {NAV_LINKS.map((link) => (
+              <NavDropdown
+                key={link.label}
+                link={link}
+                isActive={active === link.href.slice(1)}
+                align={link.label === 'Contact' ? 'right' : 'center'}
+                width={link.label === 'Skills' ? 'w-[22rem]' : link.label === 'Contact' ? 'w-[20rem]' : 'w-[26rem]'}
+              >
+                <DropdownContent label={link.label} />
+              </NavDropdown>
+            ))}
             <a
               href="#contact"
               className="inline-flex items-center gap-2 rounded-full border border-carnation px-6 py-[0.7rem] text-[0.9375rem] font-medium text-carnation transition-colors hover:bg-carnation hover:text-void"
@@ -203,23 +200,30 @@ export default function Navbar() {
   )
 }
 
-/* "Work" in the desktop nav opens a menu of every project with its status.
-   Pure CSS (hover or keyboard focus inside), so it needs no state; the pt-5
-   on the panel is a hover bridge so the pointer can cross the gap. */
-function WorkMenu({
+/* Every desktop nav item opens a menu on hover or keyboard focus. Pure CSS,
+   so it needs no state; the pt-5 on the panel is a hover bridge so the
+   pointer can cross the gap without the menu closing. */
+function NavDropdown({
   link,
   isActive,
+  align = 'center',
+  width = 'w-[26rem]',
+  children,
 }: {
   link: { label: string; href: string }
   isActive: boolean
+  align?: 'center' | 'right'
+  width?: string
+  children: React.ReactNode
 }) {
+  const position = align === 'right' ? 'right-0' : 'left-1/2 -translate-x-1/2'
   return (
-    <div className="group/work relative">
+    <div className="group/nav relative">
       <a
         href={link.href}
         aria-haspopup="true"
         aria-current={isActive ? 'true' : undefined}
-        className={`inline-flex items-center gap-1.5 text-[0.9375rem] font-medium transition-colors hover:text-carnation group-hover/work:text-carnation group-focus-within/work:text-carnation ${
+        className={`inline-flex items-center gap-1.5 text-[0.9375rem] font-medium transition-colors hover:text-carnation group-hover/nav:text-carnation group-focus-within/nav:text-carnation ${
           isActive ? 'text-ivory' : 'text-muted'
         }`}
       >
@@ -234,45 +238,157 @@ function WorkMenu({
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
-          className="transition-transform duration-200 group-hover/work:rotate-180 group-focus-within/work:rotate-180"
+          className="transition-transform duration-200 group-hover/nav:rotate-180 group-focus-within/nav:rotate-180"
         >
           <path d="m6 9 6 6 6-6" />
         </svg>
       </a>
 
-      <div className="invisible absolute left-1/2 top-full z-10 w-[26rem] -translate-x-1/2 translate-y-1 pt-5 opacity-0 transition duration-200 group-hover/work:visible group-hover/work:translate-y-0 group-hover/work:opacity-100 group-focus-within/work:visible group-focus-within/work:translate-y-0 group-focus-within/work:opacity-100">
-        <div className="glass rounded-xl p-2">
+      <div
+        className={`invisible absolute top-full z-10 ${position} ${width} translate-y-1 pt-5 opacity-0 transition duration-200 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100 group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100`}
+      >
+        <div className="glass rounded-xl p-2">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+function MenuRow({
+  href,
+  title,
+  sub,
+  tag,
+  external = false,
+}: {
+  href: string
+  title: string
+  sub?: string
+  tag?: React.ReactNode
+  external?: boolean
+}) {
+  return (
+    <a
+      href={href}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className="flex items-center justify-between gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5 focus-visible:bg-white/5"
+    >
+      <span className="min-w-0">
+        <span className="block truncate text-[14px] font-medium text-ivory">{title}</span>
+        {sub && (
+          <span className="block truncate font-mono text-[10px] uppercase tracking-[0.1em] text-dim">
+            {sub}
+          </span>
+        )}
+      </span>
+      {tag}
+    </a>
+  )
+}
+
+function MenuFooter({ href, label }: { href: string; label: string }) {
+  return (
+    <a
+      href={href}
+      className="mt-1 flex items-center justify-between rounded-lg border-t border-hairline px-3 pb-1.5 pt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-dim transition-colors hover:text-carnation"
+    >
+      {label}
+      <ArrowUpRight />
+    </a>
+  )
+}
+
+function DropdownContent({ label }: { label: string }) {
+  switch (label) {
+    case 'Work':
+      return (
+        <>
           <ul className="m-0 list-none p-0">
             {PROJECTS.map((p) => (
               <li key={p.slug}>
-                <a
+                <MenuRow
                   href={`#${p.slug}`}
-                  className="flex items-center justify-between gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5 focus-visible:bg-white/5"
+                  title={p.title}
+                  sub={p.meta}
+                  tag={<StatusTag status={p.status} />}
+                />
+              </li>
+            ))}
+          </ul>
+          <MenuFooter href="#work" label="View all work" />
+        </>
+      )
+    case 'Services':
+      return (
+        <>
+          <ul className="m-0 list-none p-0">
+            {SERVICES.map((s) => (
+              <li key={s.title}>
+                <MenuRow href="#services" title={s.title} sub={`Service ${s.index}`} />
+              </li>
+            ))}
+          </ul>
+          <MenuFooter href="#services" label="How a project runs" />
+        </>
+      )
+    case 'About':
+      return (
+        <>
+          <ul className="m-0 list-none p-0">
+            {PILLARS.map((p) => (
+              <li key={p.title}>
+                <MenuRow href="#about" title={p.title} sub={p.body} />
+              </li>
+            ))}
+          </ul>
+          <MenuFooter href="#about" label="More about me" />
+        </>
+      )
+    case 'Skills':
+      return (
+        <>
+          <ul className="m-0 grid list-none grid-cols-2 gap-1 p-0">
+            {STACK_ITEMS.map((t) => (
+              <li key={t.name}>
+                <a
+                  href="#stack"
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5 focus-visible:bg-white/5"
                 >
-                  <span className="min-w-0">
-                    <span className="block truncate text-[14px] font-medium text-ivory">
-                      {p.title}
-                    </span>
-                    <span className="block font-mono text-[10px] uppercase tracking-[0.1em] text-dim">
-                      {p.meta}
-                    </span>
-                  </span>
-                  <StatusTag status={p.status} />
+                  <img src={t.logo} alt="" className="h-5 w-5 object-contain" />
+                  <span className="text-[14px] text-ivory">{t.name}</span>
                 </a>
               </li>
             ))}
           </ul>
-          <a
-            href="#work"
-            className="mt-1 flex items-center justify-between rounded-lg border-t border-hairline px-3 pb-1.5 pt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-dim transition-colors hover:text-carnation"
-          >
-            View all work
-            <ArrowUpRight />
-          </a>
-        </div>
-      </div>
-    </div>
-  )
+          <MenuFooter href="#stack" label="Full toolbench" />
+        </>
+      )
+    case 'Contact':
+      return (
+        <>
+          <ul className="m-0 list-none p-0">
+            <li>
+              <MenuRow href={`mailto:${CONFIG.email}`} title="Email" sub={CONFIG.email} />
+            </li>
+            <li>
+              <MenuRow
+                href={`https://wa.me/${CONFIG.whatsapp}`}
+                title="WhatsApp"
+                sub="Message me directly"
+                external
+              />
+            </li>
+            {CONFIG.socials.map((s) => (
+              <li key={s.label}>
+                <MenuRow href={s.href} title={s.label} sub="Code and projects" external />
+              </li>
+            ))}
+          </ul>
+          <MenuFooter href="#contact" label="Send an inquiry" />
+        </>
+      )
+    default:
+      return null
+  }
 }
 
 function ArrowUpRight() {

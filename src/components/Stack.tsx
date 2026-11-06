@@ -1,27 +1,6 @@
 import SectionLabel from './SectionLabel'
 import Reveal from './Reveal'
-import firebaseLogo from '../assets/firebase.webp'
-import firestoreLogo from '../assets/firestore.webp'
-import javascriptLogo from '../assets/javascript.webp'
-import html5Logo from '../assets/HTML5.webp'
-import css3Logo from '../assets/CSS3_logo.webp'
-import pwaLogo from '../assets/pwa.webp'
-import emailjsLogo from '../assets/EmailJs.webp'
-import cloudflareLogo from '../assets/Cloudflare.webp'
-
-/* Every entry is traceable to something actually shipped or in progress:
-   Firebase/Firestore/PWA on the Cloud POS and QuickBill, HTML5/CSS3/JS on
-   Crosta and Barkat, EmailJS on this page's contact form, Cloudflare hosting. */
-const STACK_ITEMS = [
-  { name: 'Firebase', logo: firebaseLogo },
-  { name: 'Firestore', logo: firestoreLogo },
-  { name: 'JavaScript', logo: javascriptLogo },
-  { name: 'HTML5', logo: html5Logo },
-  { name: 'CSS3', logo: css3Logo },
-  { name: 'PWA', logo: pwaLogo },
-  { name: 'EmailJS', logo: emailjsLogo },
-  { name: 'Cloudflare', logo: cloudflareLogo },
-]
+import { STACK_ITEMS } from '../lib/content'
 
 const REVERSED = [...STACK_ITEMS].reverse()
 

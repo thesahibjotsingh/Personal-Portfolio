@@ -1,26 +1,9 @@
 import Reveal from './Reveal'
 import SectionLabel from './SectionLabel'
+import { SERVICES } from '../lib/content'
 
 /* Copy here describes the kinds of work already shown in the Work section —
    no turnaround times, prices or guarantees are promised. */
-const SERVICES = [
-  {
-    index: '01',
-    title: 'Web platforms & internal tools',
-    body: 'Point-of-sale, billing, dashboards and hospital portals. Real-time data on Firebase, installable as a PWA, built around how the business actually runs.',
-  },
-  {
-    index: '02',
-    title: 'Brand sites & storefronts',
-    body: 'Sites and online stores designed and built end to end — clear structure, fast loading, search-friendly, and content you can update without a developer.',
-  },
-  {
-    index: '03',
-    title: 'Desktop & local-first software',
-    body: 'Tools that run on your own machine and keep your files there, like PDFStudio. For work that should not be uploaded to someone else’s server.',
-  },
-]
-
 const PROCESS = [
   { step: 'Scope', body: 'A short call to pin down what you need, who it’s for and what “done” looks like.' },
   { step: 'Design', body: 'Layout and flows agreed on screen before anything is built.' },

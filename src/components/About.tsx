@@ -1,25 +1,11 @@
 import { useLayoutEffect, useRef } from 'react'
 import SectionLabel from './SectionLabel'
 import Reveal from './Reveal'
+import { PILLARS } from '../lib/content'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 
 const STATEMENT =
   "I'm Saheb — a full stack developer who builds the whole thing: the interface, the data layer, and the deploy. Software that works the day it ships and keeps working after."
-
-const PILLARS = [
-  {
-    title: 'Platforms',
-    body: 'Cloud POS, GST billing and a hospital web platform — systems people run a business on.',
-  },
-  {
-    title: 'Storefronts & sites',
-    body: 'Brand sites and stores designed and built end to end, from layout to launch.',
-  },
-  {
-    title: 'Desktop tools',
-    body: 'Local-first software like PDFStudio, for work that should stay on your own machine.',
-  },
-]
 
 export default function About() {
   const statement = useRef<HTMLParagraphElement>(null)
