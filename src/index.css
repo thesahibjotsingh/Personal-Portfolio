@@ -459,25 +459,60 @@ body::after {
   border-color: var(--color-carnation);
 }
 .cursor[data-state='label'] .cursor-ring {
-  transform: scale(2.4);
-  background: var(--color-carnation);
-  border-color: transparent;
+  transform: scale(0.2);
+  opacity: 0;
 }
+/* over a live project the ring becomes a "View project →" pill */
 .cursor-label {
   position: absolute;
   left: 0;
   top: 0;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.16em;
+  transform: translate(-50%, -50%) scale(0.6);
+  white-space: nowrap;
+  padding: 0.8rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(14, 12, 12, 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #000;
+  color: var(--color-ivory);
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .cursor[data-state='label'] .cursor-label {
   opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* text-roll hover — see Roll.tsx */
+.roll {
+  display: inline-grid;
+  overflow: hidden;
+  vertical-align: bottom;
+  line-height: 1.25;
+}
+.roll-a,
+.roll-b {
+  grid-area: 1 / 1;
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.roll-b {
+  transform: translateY(115%);
+}
+:is(a, button):hover .roll-a,
+:is(a, button):focus-visible .roll-a {
+  transform: translateY(-115%);
+}
+:is(a, button):hover .roll-b,
+:is(a, button):focus-visible .roll-b {
+  transform: translateY(0);
 }
 
 /* Lenis owns smooth scrolling; the native behaviour would fight it */

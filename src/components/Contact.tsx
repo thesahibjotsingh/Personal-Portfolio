@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import emailjs from '@emailjs/browser'
 import Reveal from './Reveal'
+import Roll from './Roll'
+import StretchHeading from './StretchHeading'
 import SectionLabel from './SectionLabel'
 import Icon, { type IconName } from './Icon'
 import { CONFIG, EMAILJS, PROJECT_TYPES } from '../lib/config'
@@ -118,6 +120,8 @@ export default function Contact() {
       id="contact"
       className="px-6 py-14 md:px-8 md:py-16"
     >
+      <StretchHeading text="Let's build" />
+
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>Get In Touch</SectionLabel>
 
@@ -261,7 +265,7 @@ export default function Contact() {
                     </>
                   ) : (
                     <>
-                      Send Inquiry
+                      <Roll>Send Inquiry</Roll>
                       <Icon name="arrow" className="h-3.5 w-3.5" />
                     </>
                   )}

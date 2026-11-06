@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 import HeroMedia from './HeroMedia'
+import Roll from './Roll'
 import Icon from './Icon'
 import { CONFIG } from '../lib/config'
 
@@ -118,7 +119,7 @@ export default function Hero() {
               href="#work"
               className={`${BUTTON_BASE} border-carnation text-carnation hover:bg-carnation hover:text-void`}
             >
-              View My Work
+              <Roll>View My Work</Roll>
               <ArrowUpRight />
             </a>
 
@@ -131,7 +132,9 @@ export default function Hero() {
             >
               {/* lifted above the shine sweep, which sits at z-index 0 */}
               <Icon name="whatsapp" className="relative z-10 h-[1.1em] w-[1.1em] shrink-0" />
-              <span className="relative z-10">Book a Call</span>
+              <span className="relative z-10">
+                <Roll>Book a Call</Roll>
+              </span>
             </a>
           </div>
         </div>

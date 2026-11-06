@@ -3,6 +3,7 @@ import { PROJECTS } from '../lib/projects'
 import { SERVICES, PILLARS, STACK_ITEMS } from '../lib/content'
 import { CONFIG } from '../lib/config'
 import StatusTag from './StatusTag'
+import Roll from './Roll'
 
 const NAV_LINKS = [
   { label: 'Work', href: '#work' },
@@ -120,6 +121,8 @@ export default function Navbar() {
             </span>
           </a>
 
+          <LocalClock />
+
           <div className="hidden items-center gap-10 min-[900px]:flex">
             {NAV_LINKS.map((link) => (
               <NavDropdown
@@ -136,7 +139,7 @@ export default function Navbar() {
               href="#contact"
               className="inline-flex items-center gap-2 rounded-full border border-carnation px-6 py-[0.7rem] text-[0.9375rem] font-medium text-carnation transition-colors hover:bg-carnation hover:text-void"
             >
-              Let's Talk
+              <Roll>Let's Talk</Roll>
               <ArrowUpRight />
             </a>
           </div>
@@ -190,13 +193,31 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
               className="inline-flex w-fit items-center gap-2 rounded-full border border-carnation px-6 py-3 text-[0.9375rem] font-medium text-carnation"
             >
-              Let's Talk
+              <Roll>Let's Talk</Roll>
               <ArrowUpRight />
             </a>
           </div>
         </div>
       </nav>
     </>
+  )
+}
+
+/* Visitor's own local time, ticking once a minute. */
+function LocalClock() {
+  const format = () =>
+    new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+  const [time, setTime] = useState(format)
+
+  useEffect(() => {
+    const id = window.setInterval(() => setTime(format()), 15000)
+    return () => window.clearInterval(id)
+  }, [])
+
+  return (
+    <span className="hidden items-baseline gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-dim xl:flex">
+      Local <span className="tabular-nums text-ivory">{time}</span>
+    </span>
   )
 }
 

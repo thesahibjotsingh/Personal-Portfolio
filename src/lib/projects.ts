@@ -11,6 +11,8 @@ import limsPreview from '../assets/lims-preview.webp'
 export type Project = {
   index: string
   slug: string
+  short: string
+  tint: string
   fig: string
   title: string
   meta: string
@@ -27,6 +29,8 @@ export const PROJECTS: Project[] = [
   {
     index: '01',
     slug: 'cloud-pos',
+    short: 'Cloud POS',
+    tint: '#3b1f0d',
     fig: 'Fig. 01 — Cloud POS',
     title: 'Custom Cloud-Hosted POS System',
     meta: 'Own product',
@@ -42,6 +46,8 @@ export const PROJECTS: Project[] = [
   {
     index: '02',
     slug: 'the-crosta',
+    short: 'The Crosta',
+    tint: '#33230a',
     fig: 'Fig. 02 — E-Commerce',
     title: 'The Crosta',
     meta: 'thecrosta.com',
@@ -57,6 +63,8 @@ export const PROJECTS: Project[] = [
   {
     index: '03',
     slug: 'barkat-and-company',
+    short: 'Barkat & Co.',
+    tint: '#0f1c36',
     fig: 'Fig. 03 — Corporate',
     title: 'Barkat & Company',
     meta: 'barkatandcompany.com',
@@ -72,6 +80,8 @@ export const PROJECTS: Project[] = [
   {
     index: '04',
     slug: 'lims-hospital',
+    short: 'LIMS Hospital',
+    tint: '#0a2c36',
     fig: 'Fig. 04 — Healthcare',
     title: 'LIMS Hospital Platform',
     meta: 'Lifeline Institute, Hisar',
@@ -85,6 +95,8 @@ export const PROJECTS: Project[] = [
   {
     index: '05',
     slug: 'quickbill',
+    short: 'QuickBill',
+    tint: '#0e2244',
     fig: 'Fig. 05 — Billing',
     title: 'QuickBill',
     meta: 'Own product',
@@ -98,6 +110,8 @@ export const PROJECTS: Project[] = [
   {
     index: '06',
     slug: 'pdfstudio',
+    short: 'PDFStudio',
+    tint: '#341412',
     fig: 'Fig. 06 — Desktop',
     title: 'PDFStudio',
     meta: 'Own product',
