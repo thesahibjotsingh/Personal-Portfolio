@@ -147,13 +147,19 @@ function Panel({
         {/* The screenshot gets nearly the full page width on desktop. Width and
             height are both capped and the image keeps its own proportions, so
             nothing is cropped; it is never drawn larger than its own pixels. */}
-        <div className="panel-shot flex justify-center lg:items-start">
+        <div className="panel-shot flex justify-start overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] lg:items-start lg:justify-center lg:overflow-visible [&::-webkit-scrollbar]:hidden">
+          {/* Phones: the screenshot keeps its proportions but is shown at a
+              readable height, so it is wider than the screen and swipes sideways
+              — nothing is cropped or shrunk to a thumbnail. */}
           <img
             src={project.image}
             alt={project.imageAlt}
-            className="h-auto w-full rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:w-auto lg:max-h-[calc(100svh_-_12rem)] lg:max-w-[min(92vw,1500px)]"
+            className="h-[min(36svh,260px)] w-auto max-w-none shrink-0 rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:h-auto lg:max-h-[calc(100svh_-_12rem)] lg:max-w-[min(1200px,88vw)]"
           />
         </div>
+        <p className="-mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-dim lg:hidden">
+          Swipe to see the full screen →
+        </p>
 
         {/* fades the lower edge of the screenshot into the panel so the title reads */}
         <div

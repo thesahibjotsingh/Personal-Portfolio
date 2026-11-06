@@ -14,16 +14,20 @@ const PROCESS = [
 ]
 
 export default function Services() {
+  const section = useRef<HTMLElement>(null)
   const process = useRef<HTMLOListElement>(null)
 
-  /* The process plays out in order as you scroll. On desktop a red line draws
-     left to right and each step comes alive the moment the line reaches it:
-     its marker pops, its text lifts from dim to full. Scrubbed, so it runs
-     exactly as fast as you scroll, and runs backwards on the way up. Below
-     1024px the four steps simply rise in one after another. */
+  /* The process plays out in order as you scroll, scrubbed so it runs exactly
+     as fast as you scroll and backwards on the way up.
+     - Desktop (≥1024px): a red line draws left to right and each step wakes as
+       the line reaches it.
+     - Below that the steps stack, so the line runs down the left edge instead:
+       it draws downwards and each step lights up as it reaches the reading
+       zone; the service rows above do the same, one by one. */
   useLayoutEffect(() => {
     const list = process.current
-    if (!list || prefersReducedMotion()) return
+    const root = section.current
+    if (!list || !root || prefersReducedMotion()) return
 
     const mm = gsap.matchMedia()
     const bodies = gsap.utils.toArray<HTMLElement>('.proc-body', list)
@@ -39,12 +43,7 @@ export default function Services() {
            reaches mid-screen, so every step is lit while you're still reading. */
         scrollTrigger: { trigger: list, start: 'top 88%', end: 'top 48%', scrub: 0.4 },
       })
-      tl.fromTo(
-        '.proc-line',
-        { scaleX: 0 },
-        { scaleX: 1, ease: 'none', duration: total },
-        0,
-      )
+      tl.fromTo('.proc-line', { scaleX: 0 }, { scaleX: 1, ease: 'none', duration: total }, 0)
       // each step sits at i/4 of the width, so it wakes when the line gets there
       bodies.forEach((body, i) => {
         const at = (i / bodies.length) * total
@@ -54,13 +53,34 @@ export default function Services() {
     })
 
     mm.add('(max-width: 1023px)', () => {
-      gsap.from(bodies, {
-        opacity: 0,
-        y: 24,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.12,
-        scrollTrigger: { trigger: list, start: 'top 85%', once: true },
+      // the rail draws down the left as the whole list scrolls through the reading zone
+      gsap.fromTo(
+        '.proc-rail-fill',
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: 'none',
+          scrollTrigger: { trigger: list, start: 'top 70%', end: 'bottom 60%', scrub: 0.4 },
+        },
+      )
+      // each step: marker pops, text lifts to full as it reaches the reading zone
+      bodies.forEach((body, i) => {
+        const trigger = { trigger: body, start: 'top 82%', end: 'top 58%', scrub: 0.4 }
+        gsap.fromTo(body, { opacity: 0.2, y: 14 }, { opacity: 1, y: 0, ease: 'none', scrollTrigger: trigger })
+        gsap.fromTo(dots[i], { scale: 0 }, { scale: 1, ease: 'none', scrollTrigger: trigger })
+      })
+
+      // service rows: dim until they reach the reading zone, then full
+      gsap.utils.toArray<HTMLElement>('.svc-row', root).forEach((row) => {
+        gsap.fromTo(
+          row,
+          { opacity: 0.25 },
+          {
+            opacity: 1,
+            ease: 'none',
+            scrollTrigger: { trigger: row, start: 'top 85%', end: 'top 55%', scrub: 0.4 },
+          },
+        )
       })
     })
 
@@ -68,7 +88,7 @@ export default function Services() {
   }, [])
 
   return (
-    <section id="services" className="px-6 py-14 md:px-10 md:py-24">
+    <section ref={section} id="services" className="px-6 py-14 md:px-10 md:py-24">
       <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>Services</SectionLabel>
 
@@ -82,7 +102,7 @@ export default function Services() {
           <ul className="m-0 list-none p-0">
             {SERVICES.map((s, i) => (
               <Reveal key={s.title} delay={i * 80}>
-                <li className="group grid gap-4 border-t border-hairline py-8 lg:grid-cols-12 lg:gap-14 lg:py-10">
+                <li className="svc-row group grid gap-4 border-t border-hairline py-8 lg:grid-cols-12 lg:gap-14 lg:py-10">
                   <div className="flex items-baseline gap-5 lg:col-span-6">
                     <span className="font-mono text-[11px] tracking-[0.2em] text-carnation">
                       {s.index}
@@ -105,11 +125,8 @@ export default function Services() {
             </h3>
           </Reveal>
 
-          <ol
-            ref={process}
-            className="relative m-0 grid list-none gap-0 p-0 md:grid-cols-2 lg:grid-cols-4"
-          >
-            {/* the track, and the red line that draws along it (desktop only) */}
+          <ol ref={process} className="relative m-0 grid list-none gap-0 p-0 lg:grid-cols-4">
+            {/* desktop: the track, and the red line that draws along it */}
             <span
               aria-hidden="true"
               className="pointer-events-none absolute left-0 right-0 top-0 hidden h-px bg-hairline lg:block"
@@ -119,15 +136,22 @@ export default function Services() {
               className="proc-line pointer-events-none absolute left-0 right-0 top-0 hidden h-px origin-left bg-carnation lg:block"
               style={{ transform: 'scaleX(0)' }}
             />
+            {/* below desktop: the same idea as a vertical rail down the left */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-3 left-[5px] top-3 w-px bg-hairline lg:hidden"
+            />
+            <span
+              aria-hidden="true"
+              className="proc-rail-fill pointer-events-none absolute bottom-3 left-[5px] top-3 w-px origin-top bg-carnation lg:hidden"
+              style={{ transform: 'scaleY(0)' }}
+            />
 
             {PROCESS.map((p, i) => (
-              <li
-                key={p.step}
-                className="relative h-full border-t border-hairline py-6 pr-8 lg:border-t-0"
-              >
+              <li key={p.step} className="relative h-full py-6 pl-9 lg:pl-0 lg:pr-8">
                 <span
                   aria-hidden="true"
-                  className="proc-dot absolute -top-[5px] left-0 hidden h-[11px] w-[11px] rounded-full bg-carnation lg:block"
+                  className="proc-dot absolute left-0 top-[2.1rem] h-[11px] w-[11px] rounded-full bg-carnation lg:-top-[5px]"
                 />
                 <div className="proc-body">
                   <span className="font-mono text-[11px] tracking-[0.2em] text-carnation">

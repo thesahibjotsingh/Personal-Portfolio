@@ -16,7 +16,7 @@ const WHATSAPP_HREF = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponen
 /* Buttons share every dimension so the pair reads as a matched set; only
    border and text colour separate primary from secondary. */
 const BUTTON_BASE =
-  'inline-flex items-center justify-center gap-2 rounded-[3px] border px-7 py-[0.9rem] text-[0.9375rem] font-medium transition-colors duration-200 max-[479px]:w-full xl:px-8 xl:py-[1.05rem] xl:text-[1rem]'
+  'inline-flex items-center justify-center gap-2 rounded-[3px] border px-7 py-[0.9rem] text-[0.9375rem] font-medium transition-colors duration-200 max-[479px]:w-full max-[479px]:px-3 xl:px-8 xl:py-[1.05rem] xl:text-[1rem]'
 
 export default function Hero() {
   const [entered, setEntered] = useState(false)
@@ -93,7 +93,7 @@ export default function Hero() {
         </p>
 
         <div className="hero-step relative z-30 mt-6" style={step(3)}>
-          <div className="hero-fade flex flex-wrap items-center gap-4">
+          <div className="hero-fade grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
           <a
             href="#work"
             className={`${BUTTON_BASE} border-carnation text-carnation hover:bg-carnation hover:text-void`}

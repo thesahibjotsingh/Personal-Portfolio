@@ -24,20 +24,41 @@ const MEDIA_CLASSES =
    boundary guillotine it. Masking the element (rather than overlaying black)
    means it fades against whatever is behind it. */
 const BOTTOM_FADE = 'linear-gradient(to bottom, #000 90%, transparent 100%)'
-const MEDIA_STYLE = {
+const BASE_STYLE = {
   animation: 'mediaIn 1s cubic-bezier(.22,1,.36,1) both',
   maskImage: BOTTOM_FADE,
   WebkitMaskImage: BOTTOM_FADE,
-  /* Turns the clip's black background transparent (see the filter in the JSX
-     below), so the statue is a true cut-out that the headline can sit behind. */
-  filter: 'url(#statue-cutout)',
 }
+
+/* Two ways to lose the clip's black background:
+   - cut-out: an SVG filter turns luminance into alpha, so the statue is truly
+     transparent and the headline can sit BEHIND it (desktop Chrome/Edge/Firefox);
+   - blend: `lighten` lets the page colour win wherever the clip is black. The
+     text then reads in front of the statue instead of behind it, which is fine
+     on phones (nothing overlaps) and is the safe fallback for WebKit.
+   iPhone browsers (all WebKit) and desktop Safari don't apply that SVG filter
+   to video, which left a black rectangle around the statue — so they get the
+   blend. `?nocutout` forces the fallback for testing. */
+function supportsCutout() {
+  if (new URLSearchParams(window.location.search).has('nocutout')) return false
+  if (!window.matchMedia('(min-width: 1024px)').matches) return false
+  const ua = navigator.userAgent
+  const iOS = /iP(hone|ad|od)/.test(ua)
+  const safari = /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(ua)
+  return !(iOS || safari)
+}
+
+const mediaStyle = (cutout: boolean) =>
+  cutout
+    ? { ...BASE_STYLE, filter: 'url(#statue-cutout)' }
+    : { ...BASE_STYLE, mixBlendMode: 'lighten' as const }
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max)
 
 export default function HeroMedia() {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const [cutout] = useState(supportsCutout)
   const [reducedMotion, setReducedMotion] = useState(
     () => window.matchMedia(REDUCED_MOTION).matches,
   )
@@ -150,7 +171,12 @@ export default function HeroMedia() {
   }, [reducedMotion, canScrub])
 
   return (
-    <div className="pointer-events-none relative z-10 order-2 flex h-[46svh] items-end justify-center lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-[var(--nav-h,73px)] lg:order-none lg:h-auto lg:items-center lg:justify-end lg:pb-[5.5rem] lg:pr-[0.5vw]">
+    <div className={`pointer-events-none relative order-2 flex h-[46svh] items-end justify-center ${
+        /* z-index creates a stacking context, which would isolate the video from
+           the page behind it and stop the lighten blend from working — so it is
+           only set when the cut-out filter (not the blend) is in use. */
+        cutout ? 'lg:z-10' : ''
+      } lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-[var(--nav-h,73px)] lg:order-none lg:h-auto lg:items-center lg:justify-end lg:pb-[5.5rem] lg:pr-[0.5vw]`}>
       {/* Luminance becomes alpha: bright marble stays opaque, the black backdrop
           (and compression noise near black) drops to nothing. Dark folds in the
           marble sit well above the threshold, so the figure stays solid. */}
@@ -164,7 +190,7 @@ export default function HeroMedia() {
       </svg>
 
       {reducedMotion || playbackBlocked ? (
-        <img src={statueStill} alt="" className={MEDIA_CLASSES} style={MEDIA_STYLE} />
+        <img src={statueStill} alt="" className={MEDIA_CLASSES} style={mediaStyle(cutout)} />
       ) : (
         /* Cursor-scrubbed with a mouse; a plain loop on touch. */
         <video
@@ -177,7 +203,7 @@ export default function HeroMedia() {
           playsInline
           preload="auto"
           className={MEDIA_CLASSES}
-          style={MEDIA_STYLE}
+          style={mediaStyle(cutout)}
         />
       )}
     </div>

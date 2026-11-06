@@ -9,6 +9,7 @@ const STATEMENT =
 
 export default function About() {
   const statement = useRef<HTMLParagraphElement>(null)
+  const pillars = useRef<HTMLUListElement>(null)
 
   useLayoutEffect(() => {
     if (prefersReducedMotion() || !statement.current) return
@@ -32,6 +33,31 @@ export default function About() {
     return () => ctx.revert()
   }, [])
 
+  /* Stacked pillars (below 1024px) play out one at a time: each one's red rule
+     draws across and its text lifts from dim to full as it reaches the reading
+     zone. Scrubbed, so it follows the scroll and reverses on the way up. */
+  useLayoutEffect(() => {
+    const list = pillars.current
+    if (!list || prefersReducedMotion()) return
+    const mm = gsap.matchMedia()
+    mm.add('(max-width: 1023px)', () => {
+      gsap.utils.toArray<HTMLElement>('.pillar', list).forEach((item) => {
+        const trigger = { trigger: item, start: 'top 85%', end: 'top 55%', scrub: 0.4 }
+        gsap.fromTo(
+          item.querySelector('.pillar-body'),
+          { opacity: 0.2, y: 14 },
+          { opacity: 1, y: 0, ease: 'none', scrollTrigger: trigger },
+        )
+        gsap.fromTo(
+          item.querySelector('.pillar-line'),
+          { scaleX: 0 },
+          { scaleX: 1, ease: 'none', scrollTrigger: trigger },
+        )
+      })
+    })
+    return () => mm.revert()
+  }, [])
+
   return (
     <section id="about" className="px-6 py-16 md:px-10 md:py-28">
       <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
@@ -49,14 +75,24 @@ export default function About() {
             ))}
           </p>
 
-          <ul className="m-0 mt-20 grid w-full list-none gap-x-10 gap-y-2 p-0 md:grid-cols-3">
+          <ul
+            ref={pillars}
+            className="m-0 mt-20 grid w-full list-none gap-x-10 gap-y-2 p-0 md:grid-cols-3"
+          >
             {PILLARS.map((p, i) => (
               <Reveal key={p.title} delay={i * 90}>
-                <li className="h-full border-t border-hairline py-6">
-                  <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-carnation">
-                    {p.title}
-                  </h3>
-                  <p className="mt-3 text-[15px] leading-relaxed text-muted">{p.body}</p>
+                <li className="pillar relative h-full border-t border-hairline py-6">
+                  <span
+                    aria-hidden="true"
+                    className="pillar-line pointer-events-none absolute left-0 top-[-1px] h-px w-full origin-left bg-carnation lg:hidden"
+                    style={{ transform: 'scaleX(0)' }}
+                  />
+                  <div className="pillar-body">
+                    <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-carnation">
+                      {p.title}
+                    </h3>
+                    <p className="mt-3 text-[15px] leading-relaxed text-muted">{p.body}</p>
+                  </div>
                 </li>
               </Reveal>
             ))}
