@@ -8,6 +8,7 @@ import posMobile from '../assets/pos-mobile.webp'
 import crostaMobile from '../assets/crosta-mobile.webp'
 import barkatMobile from '../assets/barkat-mobile.webp'
 import limsMobile from '../assets/lims-mobile.webp'
+import quickbillMobile from '../assets/quickbill-mobile.webp'
 
 /* Every entry is real work. "Live" ones link to the running site; the
    "In development" ones have no public URL yet, so they don't link — and carry
@@ -121,6 +122,8 @@ export const PROJECTS: Project[] = [
     tags: ['Next.js', 'TypeScript', 'Firestore', 'Cloudflare'],
     image: quickbillPreview,
     imageAlt: 'QuickBill home screen — quotations, parties and items',
+    mobileImage: quickbillMobile,
+    mobileAlt: 'QuickBill on a phone — quotation shortcuts and recent quotations',
   },
   {
     index: '06',
