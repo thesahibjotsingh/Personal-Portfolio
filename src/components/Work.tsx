@@ -113,9 +113,9 @@ function Panel({ project, total }: { project: Project; total: number }) {
     >
       <Wrapper
         {...linkProps}
-        className="panel-inner flex h-full min-h-svh flex-col justify-between gap-8 px-6 pb-10 pt-[calc(var(--nav-h,74px)+1.5rem)] md:px-10 lg:min-h-0 lg:origin-top lg:pb-8"
+        className="panel-inner relative flex h-full min-h-svh flex-col gap-6 px-6 pb-10 pt-[calc(var(--nav-h,74px)+1.5rem)] md:px-10 lg:min-h-0 lg:origin-top lg:pb-0"
       >
-        <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4">
+        <div className="flex w-full items-center justify-between gap-4">
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
             <span className="text-carnation">{project.index}</span> / 0{total}
             <span className="ml-4 hidden sm:inline">{project.fig}</span>
@@ -128,19 +128,26 @@ function Panel({ project, total }: { project: Project; total: number }) {
           </span>
         </div>
 
-        {/* The screenshot is shown whole: width and height are both capped, and
-            the image keeps its own proportions — nothing is cropped. */}
-        <div className="panel-shot flex flex-1 items-center justify-center">
+        {/* The screenshot gets nearly the full page width on desktop. Width and
+            height are both capped and the image keeps its own proportions, so
+            nothing is cropped; it is never drawn larger than its own pixels. */}
+        <div className="panel-shot flex justify-center lg:items-start">
           <img
             src={project.image}
             alt={project.imageAlt}
-            className="h-auto max-h-[max(10rem,min(44svh,calc(100svh_-_31rem)))] w-auto max-w-full rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:max-w-[min(1200px,88vw)]"
+            className="h-auto w-full rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:w-auto lg:max-h-[calc(100svh_-_12rem)] lg:max-w-[min(92vw,1500px)]"
           />
         </div>
 
-        <div className="mx-auto grid w-full max-w-[1600px] items-end gap-6 lg:grid-cols-12 lg:gap-14">
-          <div className="lg:col-span-7">
-            <h3 className="m-0 font-sans text-[clamp(3rem,9vw,9rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory">
+        {/* fades the lower edge of the screenshot into the panel so the title reads */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-[46%] bg-gradient-to-t from-black/90 via-black/50 to-transparent lg:block"
+        />
+
+        <div className="flex flex-col gap-6 lg:absolute lg:inset-x-10 lg:bottom-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+          <div className="lg:max-w-[62%]">
+            <h3 className="m-0 font-sans text-[clamp(3rem,8vw,8.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory">
               {project.short.split(' ').map((word, i) => (
                 <span key={i} className="mr-[0.2em] inline-block overflow-hidden align-bottom">
                   <span className="pt-word inline-block">{word}</span>
@@ -150,10 +157,8 @@ function Panel({ project, total }: { project: Project; total: number }) {
             <p className="mt-3 text-[15px] text-muted">{project.title}</p>
           </div>
 
-          <div className="lg:col-span-5">
-            <p className="max-w-xl text-[15px] leading-relaxed text-muted lg:text-[16px]">
-              {project.blurb}
-            </p>
+          <div className="lg:max-w-md lg:rounded-xl lg:border lg:border-white/10 lg:bg-black/45 lg:p-5 lg:backdrop-blur-md">
+            <p className="text-[15px] leading-relaxed text-muted">{project.blurb}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {project.tags.map((t) => (
                 <span

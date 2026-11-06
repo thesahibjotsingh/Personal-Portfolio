@@ -386,7 +386,8 @@
 
 /* project rows are anchor targets for the Work menu — clear the fixed nav */
 article[id] {
-  scroll-margin-top: calc(var(--nav-h, 74px) + 24px);
+  /* panels are full-screen and pad themselves clear of the nav */
+  scroll-margin-top: 0;
 }
 
 /* skip link: off-screen until a keyboard user tabs to it */
