@@ -150,7 +150,7 @@ export default function HeroMedia() {
   }, [reducedMotion, canScrub])
 
   return (
-    <div className="pointer-events-none relative z-10 order-2 flex h-[46svh] items-end justify-center lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-[var(--nav-h,73px)] lg:order-none lg:h-auto lg:items-center lg:justify-end lg:pb-[5.5rem] lg:pr-[1.5vw]">
+    <div className="pointer-events-none relative z-10 order-2 flex h-[46svh] items-end justify-center lg:absolute lg:inset-x-0 lg:bottom-0 lg:top-[var(--nav-h,73px)] lg:order-none lg:h-auto lg:items-center lg:justify-end lg:pb-[5.5rem] lg:pr-[0.5vw]">
       {/* Luminance becomes alpha: bright marble stays opaque, the black backdrop
           (and compression noise near black) drops to nothing. Dark folds in the
           marble sit well above the threshold, so the figure stays solid. */}

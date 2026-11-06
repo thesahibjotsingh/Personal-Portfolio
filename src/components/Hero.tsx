@@ -3,6 +3,7 @@ import { gsap, prefersReducedMotion } from '../lib/motion'
 import HeroMedia from './HeroMedia'
 import Roll from './Roll'
 import CharSwap from './CharSwap'
+import LocalClock from './LocalClock'
 import Icon from './Icon'
 import { CONFIG } from '../lib/config'
 
@@ -64,9 +65,10 @@ export default function Hero() {
         </p>
 
         <h1
-          /* Sized by the narrower of width and height so three lines always fit
-             a short window; the longest line ends where the statue begins. */
-          className="hero-step relative z-0 mt-5 font-sans text-[clamp(2.5rem,min(6.5vw,13svh),8.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory"
+          /* On desktop the size is worked out from the room left of the statue: the
+             statue's width follows the window's height, so the longest line is
+             sized to end where the statue's shoulder begins, at any aspect ratio. */
+          className="hero-step relative z-0 mt-5 font-sans text-[2.5rem] sm:text-[3.25rem] lg:text-[clamp(2.25rem,min(5.6vw,12.5svh,calc((94vw_-_0.85*(100svh_-_10rem)_-_0.75rem)/11.4)),8.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory"
           style={step(1)}
         >
           <span className="hero-fade block">
@@ -139,9 +141,7 @@ export default function Hero() {
           <Roll>Scroll</Roll>
         </a>
 
-        <p className="hidden font-mono text-[10.5px] uppercase tracking-[0.14em] text-dim sm:block">
-          {CONFIG.tagline}
-        </p>
+        <LocalClock className="hidden sm:flex" />
       </div>
     </section>
   )

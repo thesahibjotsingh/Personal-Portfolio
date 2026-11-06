@@ -121,8 +121,6 @@ export default function Navbar() {
             </span>
           </a>
 
-          <LocalClock />
-
           <div className="hidden items-center gap-10 min-[900px]:flex">
             {NAV_LINKS.map((link) => (
               <NavDropdown
@@ -200,24 +198,6 @@ export default function Navbar() {
         </div>
       </nav>
     </>
-  )
-}
-
-/* Visitor's own local time, ticking once a minute. */
-function LocalClock() {
-  const format = () =>
-    new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
-  const [time, setTime] = useState(format)
-
-  useEffect(() => {
-    const id = window.setInterval(() => setTime(format()), 15000)
-    return () => window.clearInterval(id)
-  }, [])
-
-  return (
-    <span className="hidden items-baseline gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-dim xl:flex">
-      Local <span className="tabular-nums text-ivory">{time}</span>
-    </span>
   )
 }
 
