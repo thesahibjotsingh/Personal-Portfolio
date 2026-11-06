@@ -52,7 +52,7 @@ export const PROJECTS: Project[] = [
     cta: 'View live demo',
     image: demoPreview,
     imageAlt: 'Artisanal POS live demo — menu ordering screen',
-    imageSize: [1910, 877],
+    imageSize: [1907, 875],
     mobileImage: posMobile,
     mobileAlt: 'Artisanal POS on a phone — menu and order bar',
     mobileSize: [1180, 2000],
