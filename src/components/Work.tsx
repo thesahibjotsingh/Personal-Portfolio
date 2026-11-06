@@ -109,8 +109,8 @@ const PROJECTS: Project[] = [
 
 export default function Work() {
   return (
-    <section id="work" className="px-6 py-14 md:px-8 md:py-24">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
+    <section id="work" className="px-6 py-14 md:px-10 md:py-24">
+      <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>Selected Work</SectionLabel>
 
         <div>
@@ -128,8 +128,8 @@ export default function Work() {
           </Reveal>
 
           <div>
-            {PROJECTS.map((project, i) => (
-              <ProjectRow key={project.title} project={project} flip={i % 2 === 1} />
+            {PROJECTS.map((project) => (
+              <ProjectRow key={project.title} project={project} />
             ))}
           </div>
         </div>
@@ -138,7 +138,7 @@ export default function Work() {
   )
 }
 
-function ProjectRow({ project, flip }: { project: Project; flip: boolean }) {
+function ProjectRow({ project }: { project: Project }) {
   const root = useRef<HTMLElement>(null)
 
   /* Two scrubbed motions: the frame opens up from an inset clip as it enters,
@@ -185,13 +185,13 @@ function ProjectRow({ project, flip }: { project: Project; flip: boolean }) {
   const Wrapper = (project.href ? 'a' : 'div') as 'a'
 
   return (
-    <article ref={root} className="group border-t border-hairline py-10 md:py-16">
-      <Wrapper
-        {...linkProps}
-        className="grid items-center gap-8 lg:grid-cols-12 lg:gap-14"
-      >
-        <div className={`lg:col-span-5 ${flip ? 'lg:order-2' : ''}`}>
-          <Reveal>
+    <article ref={root} className="group border-t border-hairline py-10 md:py-20">
+      {/* Image first, full width; the copy sits underneath in two columns.
+          flex-col-reverse keeps the text earlier in the DOM for screen readers. */}
+      <Wrapper {...linkProps} className="flex flex-col-reverse gap-8 md:gap-12">
+        <div>
+          <Reveal className="grid gap-8 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-5">
             <span className="stroke-num font-display text-7xl leading-none md:text-8xl">
               {project.index}
             </span>
@@ -209,8 +209,12 @@ function ProjectRow({ project, flip }: { project: Project; flip: boolean }) {
               {project.title}
             </h3>
             <StatusBadge status={project.status} />
+            </div>
 
-            <p className="mt-4 text-[14.5px] leading-relaxed text-muted">{project.blurb}</p>
+            <div className="lg:col-span-7">
+            <p className="max-w-3xl text-[15.5px] leading-relaxed text-muted md:text-[17px]">
+              {project.blurb}
+            </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
               {project.tags.map((t) => (
@@ -224,10 +228,11 @@ function ProjectRow({ project, flip }: { project: Project; flip: boolean }) {
             </div>
 
             {project.href && <VisitCue label={project.cta ?? 'Visit'} />}
+            </div>
           </Reveal>
         </div>
 
-        <div className={`lg:col-span-7 ${flip ? 'lg:order-1' : ''}`}>
+        <div>
           {/* Natural height, no fixed aspect: screenshots are shown whole. */}
           <div className="pr-frame panel relative overflow-hidden rounded-t-xl">
             <img src={project.image} alt={project.imageAlt} className="block h-auto w-full" />
