@@ -5,12 +5,14 @@ import { SERVICES } from '../lib/content'
 import { REGIONS, money, type RegionKey } from '../lib/config'
 import { useRegion } from '../lib/region'
 import RegionSwitch from './RegionSwitch'
+import Roll from './Roll'
+import Icon from './Icon'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 
 /* Copy here describes the kinds of work already shown in the Work section —
    no turnaround times, prices or guarantees are promised. */
 const PROCESS = [
-  { step: 'Scope', body: 'A short call to pin down what you need, who it’s for and what “done” looks like.' },
+  { step: 'Brief', body: 'Answer five quick questions. I reply with a rough plan, a price range and, if it helps, a short call.' },
   { step: 'Design', body: 'Layout and flows agreed on screen before anything is built.' },
   { step: 'Build', body: 'Working software you can click through, not a slide deck about it.' },
   { step: 'Launch', body: 'Deployed, checked on real devices, and walked through with you.' },
@@ -196,6 +198,19 @@ export default function Services() {
               </li>
             ))}
           </ol>
+
+          <Reveal>
+            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <a
+                href="#contact"
+                className="btn-primary inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[12px] uppercase tracking-[0.12em]"
+              >
+                <Roll>Start your brief</Roll>
+                <Icon name="arrow" className="h-3.5 w-3.5" />
+              </a>
+              <span className="text-[13px] text-dim">Five questions, a couple of minutes.</span>
+            </div>
+          </Reveal>
 
           <Reveal>
             <h3 className="mb-8 mt-20 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
