@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, type CSSProperties } from 'react'
 import Reveal from './Reveal'
 import Roll from './Roll'
 import CharSwap from './CharSwap'
@@ -69,7 +69,7 @@ export default function Work() {
           <SectionLabel>Selected Work</SectionLabel>
 
           <Reveal>
-            <div className="mb-14 flex flex-wrap items-end justify-between gap-4 md:mb-20">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4 md:mb-20">
               <h2 className="font-display text-4xl font-normal text-ivory md:text-6xl">
                 Built end to end,{' '}
                 <span className="italic text-carnation-deep">in the open</span>.
@@ -115,7 +115,7 @@ function Panel({
   return (
     <article
       id={project.slug}
-      className={`panel-stack group relative min-h-svh overflow-hidden lg:sticky lg:top-0 lg:h-svh ${
+      className={`panel-stack group relative overflow-hidden lg:sticky lg:top-0 lg:h-svh lg:min-h-svh ${
         first ? '' : 'border-t border-hairline'
       }`}
       /* The first panel fades up out of the page colour so there is no hard
@@ -129,7 +129,7 @@ function Panel({
     >
       <Wrapper
         {...linkProps}
-        className="panel-inner relative flex h-full min-h-svh flex-col gap-6 px-6 pb-10 pt-[calc(var(--nav-h,74px)+1.5rem)] md:px-10 lg:min-h-0 lg:origin-top lg:pb-0"
+        className="panel-inner relative flex h-full flex-col gap-6 px-6 pb-12 pt-10 md:px-10 lg:min-h-0 lg:origin-top lg:pb-0 lg:pt-[calc(var(--nav-h,74px)+1.5rem)]"
       >
         <div className="flex w-full items-center justify-between gap-4">
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
@@ -147,18 +147,37 @@ function Panel({
         {/* The screenshot gets nearly the full page width on desktop. Width and
             height are both capped and the image keeps its own proportions, so
             nothing is cropped; it is never drawn larger than its own pixels. */}
-        <div className="panel-shot flex justify-start overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] lg:items-start lg:justify-center lg:overflow-visible [&::-webkit-scrollbar]:hidden">
-          {/* Phones: the screenshot keeps its proportions but is shown at a
-              readable height, so it is wider than the screen and swipes sideways
-              — nothing is cropped or shrunk to a thumbnail. */}
+        <div
+          className="panel-shot flex items-start justify-start gap-4 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] lg:justify-center lg:gap-6 lg:overflow-visible [&::-webkit-scrollbar]:hidden"
+          style={
+            {
+              /* One height drives both screenshots on desktop, so the pair is
+                 sized to fit the width (desktop shot ≈ 2.17 : 1, phone shot
+                 ≈ 0.55 : 1) and the height available, whichever is tighter. */
+              '--shot-h': project.mobileImage
+                ? 'min(calc(100svh - 12rem), calc(88vw / 2.8))'
+                : 'min(calc(100svh - 12rem), calc(min(1200px, 88vw) / 2.17))',
+            } as CSSProperties
+          }
+        >
+          {/* Phones: each screenshot keeps its proportions at a readable height,
+              so the row is wider than the screen and swipes sideways — nothing
+              is cropped or shrunk to a thumbnail. */}
           <img
             src={project.image}
             alt={project.imageAlt}
-            className="h-[min(36svh,260px)] w-auto max-w-none shrink-0 rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:h-auto lg:max-h-[calc(100svh_-_12rem)] lg:max-w-[min(1200px,88vw)]"
+            className="h-[min(36svh,260px)] w-auto max-w-none shrink-0 rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:h-[var(--shot-h)]"
           />
+          {project.mobileImage && (
+            <img
+              src={project.mobileImage}
+              alt={project.mobileAlt}
+              className="h-[min(36svh,260px)] w-auto max-w-none shrink-0 rounded-[1.1rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:h-[calc(var(--shot-h)*0.86)]"
+            />
+          )}
         </div>
         <p className="-mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-dim lg:hidden">
-          Swipe to see the full screen →
+          {project.mobileImage ? 'Swipe — desktop, then mobile →' : 'Swipe to see the full screen →'}
         </p>
 
         {/* fades the lower edge of the screenshot into the panel so the title reads */}

@@ -4,6 +4,10 @@ import barkatPreview from '../assets/barkat-preview.webp'
 import quickbillPreview from '../assets/quickbill-preview.webp'
 import pdfstudioPreview from '../assets/pdfstudio-preview.webp'
 import limsPreview from '../assets/lims-preview.webp'
+import posMobile from '../assets/pos-mobile.webp'
+import crostaMobile from '../assets/crosta-mobile.webp'
+import barkatMobile from '../assets/barkat-mobile.webp'
+import limsMobile from '../assets/lims-mobile.webp'
 
 /* Every entry is real work. "Live" ones link to the running site; the
    "In development" ones have no public URL yet, so they don't link — and carry
@@ -23,6 +27,9 @@ export type Project = {
   cta?: string
   image: string
   imageAlt: string
+  /* portrait phone screenshot, shown next to the desktop one when present */
+  mobileImage?: string
+  mobileAlt?: string
 }
 
 export const PROJECTS: Project[] = [
@@ -42,6 +49,8 @@ export const PROJECTS: Project[] = [
     cta: 'View live demo',
     image: demoPreview,
     imageAlt: 'Artisanal POS live demo — menu ordering screen',
+    mobileImage: posMobile,
+    mobileAlt: 'Artisanal POS on a phone — menu and order bar',
   },
   {
     index: '02',
@@ -59,6 +68,8 @@ export const PROJECTS: Project[] = [
     cta: 'Visit site',
     image: crostaPreview,
     imageAlt: 'The Crosta e-commerce storefront',
+    mobileImage: crostaMobile,
+    mobileAlt: 'The Crosta on a phone — offers and bottom navigation',
   },
   {
     index: '03',
@@ -76,6 +87,8 @@ export const PROJECTS: Project[] = [
     cta: 'Visit site',
     image: barkatPreview,
     imageAlt: 'Barkat & Company corporate platform',
+    mobileImage: barkatMobile,
+    mobileAlt: 'Barkat & Company on a phone — hero and calls to action',
   },
   {
     index: '04',
@@ -91,6 +104,8 @@ export const PROJECTS: Project[] = [
     tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Accessibility'],
     image: limsPreview,
     imageAlt: 'LIMS hospital home page — find a doctor or department',
+    mobileImage: limsMobile,
+    mobileAlt: 'LIMS hospital on a phone — search, quick actions and specialities',
   },
   {
     index: '05',
