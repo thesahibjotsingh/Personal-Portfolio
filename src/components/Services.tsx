@@ -2,7 +2,9 @@ import { useLayoutEffect, useRef } from 'react'
 import Reveal from './Reveal'
 import SectionLabel from './SectionLabel'
 import { SERVICES } from '../lib/content'
-import { PRICING, inr } from '../lib/config'
+import { REGIONS, money, type RegionKey } from '../lib/config'
+import { useRegion } from '../lib/region'
+import RegionSwitch from './RegionSwitch'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 
 /* Copy here describes the kinds of work already shown in the Work section —
@@ -14,32 +16,38 @@ const PROCESS = [
   { step: 'Launch', body: 'Deployed, checked on real devices, and walked through with you.' },
 ]
 
-/* "From" figures only — see PRICING in lib/config.ts. Websites are charged by
-   the page; the other two are scoped per project. */
-const PRICES = [
-  {
-    label: 'Websites',
-    price: inr(PRICING.perPage),
-    unit: 'per page',
-    note: 'Charged by the number of pages, so you pay for exactly what the site needs. A 6-page brand site starts around ' +
-      inr(6 * PRICING.perPage) + '.',
-  },
-  {
-    label: 'Online stores',
-    price: inr(PRICING.store),
-    unit: '',
-    note: 'Product pages, cart and payments, scoped by the size of the catalogue and the payment options.',
-  },
-  {
-    label: 'Custom software',
-    price: inr(PRICING.software),
-    unit: '',
-    note: 'POS, billing, hospital portals and desktop tools, quoted per project after a short call.',
-  },
-]
+/* "From" figures only — see REGIONS in lib/config.ts. Websites are charged by
+   the page; the other two are scoped per project. The list follows the
+   visitor's region. */
+function buildPrices(region: RegionKey) {
+  const r = REGIONS[region]
+  const m = (n: number) => money(n, region)
+  return [
+    {
+      label: 'Websites',
+      price: m(r.perPage),
+      unit: 'per page',
+      note: `Charged by the number of pages, so you pay for exactly what the site needs. A 6-page brand site starts around ${m(6 * r.perPage)}.`,
+    },
+    {
+      label: 'Online stores',
+      price: m(r.store),
+      unit: '',
+      note: 'Product pages, cart and payments, scoped by the size of the catalogue and the payment options.',
+    },
+    {
+      label: 'Custom software',
+      price: m(r.software),
+      unit: '',
+      note: 'POS, billing, hospital portals and desktop tools, quoted per project after a short call.',
+    },
+  ]
+}
 
 export default function Services() {
   const section = useRef<HTMLElement>(null)
+  const [region] = useRegion()
+  const PRICES = buildPrices(region)
   const process = useRef<HTMLOListElement>(null)
 
   /* The process plays out in order as you scroll, scrubbed so it runs exactly
@@ -193,6 +201,7 @@ export default function Services() {
             <h3 className="mb-8 mt-20 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
               How it's priced
             </h3>
+            <RegionSwitch className="-mt-4 mb-8" />
           </Reveal>
           <div className="grid gap-0 md:grid-cols-3">
             {PRICES.map((p, i) => (

@@ -28,15 +28,61 @@ export const EMAILJS = {
   toEmail: 'in.sahibjotsingh@gmail.com',
 } as const
 
-/* Starting points in rupees, set from typical Indian freelance market rates and
-   shown as "from" figures, never as quotes. Websites are charged by the page.
-   Change a number here and the Services section, the brief builder's hint and
-   the contact copy all follow. */
-export const PRICING = {
-  perPage: 4000,
-  store: 60000,
-  software: 150000,
-} as const
+/* Where a visitor is decides which price list they see. These are the
+   "starting from" figures shown on the page, set per market rather than
+   converted from one number, and websites are charged by the page everywhere.
+   Edit any number here and the Services section, the contact copy and the
+   brief builder's budget options all follow. India is the home market; the
+   United States and Canada get their own lists, and everyone else sees the
+   US one in dollars. */
+export type RegionKey = 'IN' | 'US' | 'CA'
 
-/* ₹1,50,000 style — Indian digit grouping */
-export const inr = (amount: number) => `₹${amount.toLocaleString('en-IN')}`
+export const REGIONS: Record<
+  RegionKey,
+  {
+    name: string
+    code: string
+    symbol: string
+    /* digit grouping: ₹1,50,000 in India, $150,000 elsewhere */
+    grouping: string
+    perPage: number
+    store: number
+    software: number
+    /* the three cut-offs between the four budget bands */
+    budgetSteps: [number, number, number]
+  }
+> = {
+  IN: {
+    name: 'India',
+    code: 'INR',
+    symbol: '₹',
+    grouping: 'en-IN',
+    perPage: 4000,
+    store: 60000,
+    software: 150000,
+    budgetSteps: [25000, 75000, 200000],
+  },
+  US: {
+    name: 'the United States',
+    code: 'USD',
+    symbol: '$',
+    grouping: 'en-US',
+    perPage: 75,
+    store: 1200,
+    software: 3000,
+    budgetSteps: [500, 1500, 4000],
+  },
+  CA: {
+    name: 'Canada',
+    code: 'CAD',
+    symbol: 'C$',
+    grouping: 'en-US',
+    perPage: 100,
+    store: 1600,
+    software: 4000,
+    budgetSteps: [700, 2000, 5500],
+  },
+}
+
+export const money = (amount: number, region: RegionKey) =>
+  `${REGIONS[region].symbol}${amount.toLocaleString(REGIONS[region].grouping)}`

@@ -3,7 +3,7 @@ import emailjs from '@emailjs/browser'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 import { EMAILJS } from '../lib/config'
 import {
-  BUDGETS,
+  budgetLabels,
   FEATURES,
   PAGES,
   SIZED_TYPES,
@@ -14,6 +14,8 @@ import {
 } from '../lib/brief'
 import Icon from './Icon'
 import Roll from './Roll'
+import RegionSwitch from './RegionSwitch'
+import { useRegion } from '../lib/region'
 
 type Answers = {
   type: TypeKey | ''
@@ -97,6 +99,7 @@ export default function BriefBuilder({
 }: {
   onResult: (kind: 'success' | 'error', text: string) => void
 }) {
+  const [region] = useRegion()
   const [step, setStep] = useState(0)
   const [a, setA] = useState<Answers>(EMPTY)
   const [errors, setErrors] = useState<Errors>({})
@@ -104,6 +107,11 @@ export default function BriefBuilder({
   const [sent, setSent] = useState(false)
   /* Hidden field real visitors never see; bots that fill every input do. */
   const [trap, setTrap] = useState('')
+
+  /* The budget bands are written in the visitor's currency, so a band picked
+     under another region's list no longer matches and simply counts as unset. */
+  const budgets = budgetLabels(region)
+  const budget = budgets.includes(a.budget) ? a.budget : ''
 
   const dir = useRef(1)
   const content = useRef<HTMLDivElement>(null)
@@ -195,7 +203,7 @@ export default function BriefBuilder({
       a.pages ? `Size: ${a.pages}` : null,
       `Features: ${a.features.length ? a.features.join(', ') : 'none picked'}`,
       `Timeline: ${a.timeline}`,
-      `Budget: ${a.budget}`,
+      `Budget: ${budget}`,
       a.phone.trim() ? `WhatsApp / phone: ${a.phone.trim()}` : null,
       a.notes.trim() ? `\nNotes:\n${a.notes.trim()}` : null,
     ]
@@ -239,7 +247,7 @@ export default function BriefBuilder({
   const onSubmit = (event: FormEvent) => {
     event.preventDefault()
     if (step < LAST) {
-      if (canContinue(step, a)) go(step + 1, 1)
+      if (canContinue(step, { ...a, budget })) go(step + 1, 1)
     } else {
       void submit()
     }
@@ -256,7 +264,7 @@ export default function BriefBuilder({
 
   const features = a.type ? FEATURES[a.type] : []
   const sized = SIZED_TYPES.includes(a.type as TypeKey)
-  const ok = canContinue(step, a)
+  const ok = canContinue(step, { ...a, budget })
 
   if (sent) {
     return (
@@ -279,7 +287,7 @@ export default function BriefBuilder({
           {[
             ['Project', typeLabel],
             ['Timeline', a.timeline],
-            ['Budget', a.budget],
+            ['Budget', budget],
             ...(a.pages ? [['Size', a.pages]] : []),
           ].map(([k, v]) => (
             <div key={k}>
@@ -407,12 +415,12 @@ export default function BriefBuilder({
         {step === 3 && (
           <div className="mt-6">
             <div role="radiogroup" aria-label="Budget" className="grid gap-2.5 sm:grid-cols-2">
-              {BUDGETS.map((b) => (
+              {budgets.map((b) => (
                 <Choice
                   key={b}
                   large
                   role="radio"
-                  selected={a.budget === b}
+                  selected={budget === b}
                   onClick={() => set('budget', b)}
                 >
                   <span className="text-[14.5px] text-ivory">{b}</span>
@@ -420,9 +428,10 @@ export default function BriefBuilder({
               ))}
             </div>
             <p className="bb-item mt-5 border-l border-carnation/60 pl-4 text-[13px] leading-relaxed text-muted">
-              {priceHint(a.type, a.pages)}{' '}
+              {priceHint(a.type, a.pages, region)}{' '}
               <span className="text-dim">A starting point, not a quote.</span>
             </p>
+            <RegionSwitch className="bb-item mt-4" />
           </div>
         )}
 

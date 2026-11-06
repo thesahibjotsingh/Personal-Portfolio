@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Work from './components/Work'
@@ -11,8 +12,14 @@ import Cursor from './components/Cursor'
 import ScrollProgress from './components/ScrollProgress'
 import ThemeSwitch from './components/ThemeSwitch'
 import MobileActionBar from './components/MobileActionBar'
+import { initRegion } from './lib/region'
 
 function App() {
+  /* once per page load: ask the edge which country this is, for local prices */
+  useEffect(() => {
+    void initRegion()
+  }, [])
+
   return (
     <>
       <a href="#main" className="skip-link">
