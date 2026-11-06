@@ -20,24 +20,6 @@
   --font-script: "Dancing Script", ui-serif, cursive;
 }
 
-/* Light "sheet": Contact, the footer and (while it is over them) the nav carry
-   data-scope="light", which swaps the theme colours for that subtree only. The
-   rest of the page never recolours, so there is nothing to fade or flicker —
-   the light section just scrolls in over the dark one. Unlayered, so it beats
-   the @theme defaults. */
-[data-scope='light'] {
-  color-scheme: light;
-  --color-void: #ebe7e0;
-  --color-panel: #e2ddd5;
-  --color-ivory: #181514;
-  --color-carnation: #cf2d41;
-  --color-carnation-deep: #b5182c;
-  --color-muted: #4f4a46;
-  --color-dim: #6d6761;
-  --color-hairline: rgba(24, 21, 20, 0.14);
-  --err: #c0263d;
-}
-
 @layer base {
   * {
     box-sizing: border-box;

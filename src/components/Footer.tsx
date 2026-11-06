@@ -11,7 +11,7 @@ export default function Footer() {
   return (
     /* same hairline the navbar carries on its underside, so the page opens and
        closes on an identical rule */
-    <footer data-scope="light" className="border-t border-hairline bg-void px-6 py-12 text-ivory md:px-10">
+    <footer className="border-t border-hairline bg-void px-6 py-12 text-ivory md:px-10">
       <div className="mx-auto grid max-w-[1600px] gap-10 md:grid-cols-12">
         <div className="md:col-span-5">
           <span className="font-script text-4xl font-bold text-carnation">
