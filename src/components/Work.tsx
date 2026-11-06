@@ -215,7 +215,7 @@ function Panel({
     >
       <Wrapper
         {...linkProps}
-        className="panel-inner relative flex h-full origin-top flex-col gap-4 px-6 pb-[5rem] pt-[calc(var(--nav-h,74px)+0.75rem)] md:px-10 md:pb-8 lg:gap-6 lg:pb-0"
+        className="panel-inner relative flex h-full origin-top flex-col gap-4 px-6 pb-[4.5rem] pt-[calc(var(--nav-h,74px)+0.5rem)] md:px-10 md:pb-8 lg:gap-6 lg:pb-0"
       >
         <div className="flex w-full items-center justify-between gap-4">
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
@@ -286,9 +286,9 @@ function Panel({
           className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-[46%] bg-gradient-to-t from-black/90 via-black/50 to-transparent lg:block"
         />
 
-        <div className="flex flex-col gap-6 lg:absolute lg:inset-x-10 lg:bottom-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+        <div className="flex flex-col gap-3 lg:gap-6 lg:absolute lg:inset-x-10 lg:bottom-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
           <div className="lg:max-w-[62%]">
-            <h3 className="m-0 font-sans text-[clamp(2.25rem,9.5vw,3.25rem)] lg:text-[clamp(3rem,8vw,8.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory">
+            <h3 className="m-0 font-sans text-[clamp(2rem,8.5vw,3rem)] lg:text-[clamp(3rem,8vw,8.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory">
               {project.short.split(' ').map((word, i) => (
                 <span key={i} className="mr-[0.2em] inline-block overflow-hidden align-bottom">
                   <span className="pt-word inline-block">
@@ -304,7 +304,7 @@ function Panel({
 
           <div className="lg:max-w-md lg:rounded-xl lg:border lg:border-white/10 lg:bg-black/45 lg:p-5 lg:backdrop-blur-md">
             <p className="text-[14px] leading-snug text-muted lg:text-[15px] lg:leading-relaxed">{project.blurb}</p>
-            <div className="mt-3 flex flex-wrap gap-2 lg:mt-4">
+            <div className="mt-3 flex-wrap gap-2 max-lg:hidden lg:mt-4 lg:flex">
               {project.tags.map((t, ti) => (
                 <span
                   key={t}
