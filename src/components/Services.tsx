@@ -85,18 +85,35 @@ export default function Services() {
         gsap.fromTo(body, { opacity: 0.2, y: 14 }, { opacity: 1, y: 0, ease: 'none', scrollTrigger: trigger })
         gsap.fromTo(dots[i], { scale: 0 }, { scale: 1, ease: 'none', scrollTrigger: trigger })
       })
+    })
 
-      // service rows: dim until they reach the reading zone, then full
-      gsap.utils.toArray<HTMLElement>('.svc-row', root).forEach((row) => {
-        gsap.fromTo(
-          row,
-          { opacity: 0.25 },
-          {
-            opacity: 1,
-            ease: 'none',
-            scrollTrigger: { trigger: row, start: 'top 85%', end: 'top 55%', scrub: 0.4 },
-          },
-        )
+    /* The three services are cards that stack, like the project panels: each
+       sticks near the top, the next slides up over it, and the covered one
+       shrinks and dims. Titles rise out of a mask as a card arrives. */
+    mm.add('(min-width: 0px)', () => {
+      const cards = gsap.utils.toArray<HTMLElement>('.svc-card', root)
+      cards.forEach((card, i) => {
+        const next = cards[i + 1]
+        if (next) {
+          const trigger = { trigger: next, start: 'top bottom', end: 'top 30%', scrub: true }
+          gsap.to(card.querySelector('.svc-inner'), { scale: 0.94, ease: 'none', scrollTrigger: trigger })
+          gsap.to(card.querySelector('.svc-dim'), { opacity: 0.65, ease: 'none', scrollTrigger: trigger })
+        }
+        gsap.from(card.querySelectorAll('.svc-word'), {
+          yPercent: 115,
+          duration: 1,
+          ease: 'power4.out',
+          stagger: 0.06,
+          scrollTrigger: { trigger: card, start: 'top 80%', once: true },
+        })
+        gsap.from(card.querySelectorAll('.svc-fade'), {
+          y: 24,
+          opacity: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          stagger: 0.08,
+          scrollTrigger: { trigger: card, start: 'top 75%', once: true },
+        })
       })
     })
 
@@ -122,34 +139,41 @@ export default function Services() {
             {SERVICES.map((s, i) => {
               const price = priceFor(s.price, region)
               return (
-                <Reveal key={s.title} delay={i * 80}>
-                  <li className="svc-row group grid gap-3 border-t border-hairline py-7 lg:grid-cols-12 lg:items-baseline lg:gap-10 lg:py-9">
-                    <div className="flex items-baseline gap-5 lg:col-span-5">
-                      <span className="font-mono text-[11px] tracking-[0.2em] text-carnation">
-                        {s.index}
-                      </span>
-                      <h3 className="font-sans text-2xl font-light tracking-tight text-ivory transition-colors group-hover:text-carnation md:text-3xl">
-                        {s.title}
-                      </h3>
-                    </div>
-                    <p className="pl-[2.6rem] text-[15px] leading-relaxed text-muted lg:col-span-4 lg:pl-0">
-                      {s.line}
-                    </p>
-                    <div className="pl-[2.6rem] lg:col-span-3 lg:pl-0 lg:text-right">
-                      {price.value ? (
-                        <p className="font-display text-2xl text-ivory md:text-3xl">
-                          from {price.value}
+                <li
+                  key={s.title}
+                  className="svc-card sticky mb-5 md:mb-8"
+                  style={{ top: `calc(var(--nav-h, 74px) + 0.75rem + ${i * 0.85}rem)` }}
+                >
+                  <div className="svc-inner relative origin-top overflow-hidden rounded-2xl border border-hairline bg-panel p-6 md:rounded-3xl md:p-10">
+                    <div className="flex min-h-[44svh] flex-col justify-between gap-8 md:min-h-[min(52svh,460px)] lg:flex-row lg:items-end lg:gap-14">
+                      <div className="lg:max-w-[58%]">
+                        <span className="svc-fade font-mono text-[11px] tracking-[0.2em] text-carnation">
+                          {s.index} / 0{SERVICES.length}
+                        </span>
+                        <h3 className="m-0 mt-4 font-sans text-[clamp(2rem,6.4vw,4.75rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.04em] text-ivory">
+                          {s.title.split(' ').map((word, w) => (
+                            <span key={w} className="mr-[0.22em] inline-block overflow-hidden align-bottom">
+                              <span className="svc-word inline-block">{word}</span>
+                            </span>
+                          ))}
+                        </h3>
+                      </div>
+
+                      <div className="svc-fade lg:max-w-sm lg:text-right">
+                        <p className="text-[15px] leading-relaxed text-muted">{s.line}</p>
+                        <p className="mt-4 font-display text-3xl text-ivory md:text-4xl">
+                          {price.value ? `from ${price.value}` : 'By quote'}
                           {price.unit && (
                             <span className="ml-2 font-sans text-sm text-muted">{price.unit}</span>
                           )}
                         </p>
-                      ) : (
-                        <p className="font-display text-2xl text-ivory md:text-3xl">By quote</p>
-                      )}
-                      <p className="mt-1 text-[12.5px] text-dim">{price.note}</p>
+                        <p className="mt-1 text-[12.5px] text-dim">{price.note}</p>
+                      </div>
                     </div>
-                  </li>
-                </Reveal>
+                    {/* darkens as the next card slides over this one */}
+                    <div className="svc-dim pointer-events-none absolute inset-0 bg-black opacity-0" />
+                  </div>
+                </li>
               )
             })}
           </ul>
