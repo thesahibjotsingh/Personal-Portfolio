@@ -215,7 +215,7 @@ function Panel({
     >
       <Wrapper
         {...linkProps}
-        className="panel-inner relative flex h-full origin-top flex-col gap-4 px-6 pb-[6.5rem] pt-[calc(var(--nav-h,74px)+0.75rem)] md:px-10 md:pb-8 lg:gap-6 lg:pb-0"
+        className="panel-inner relative flex h-full origin-top flex-col gap-4 px-6 pb-[5rem] pt-[calc(var(--nav-h,74px)+0.75rem)] md:px-10 md:pb-8 lg:gap-6 lg:pb-0"
       >
         <div className="flex w-full items-center justify-between gap-4">
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
@@ -270,7 +270,7 @@ function Panel({
               height={project.mobileSize?.[1]}
               loading="lazy"
               decoding="async"
-              className="h-full max-h-[460px] w-auto max-w-full shrink-0 rounded-[1.25rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:hidden"
+              className="h-full max-h-[540px] w-auto max-w-full shrink-0 rounded-[1.25rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:hidden"
             />
           )}
         </div>

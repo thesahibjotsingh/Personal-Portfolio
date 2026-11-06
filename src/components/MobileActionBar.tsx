@@ -10,15 +10,14 @@ const WHATSAPP_HREF = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponen
 /* A floating action bar for phones: WhatsApp in one tap, and a jump to the
    brief. It is built to stay out of the way:
    - slim, so it covers as little as possible;
-   - slides away while you scroll down (you're reading) and back as soon as you
-     scroll up (you're looking for something);
+   - always there once you are past the hero, so the way to reach me is never
+     more than a tap away;
    - hidden over the hero, which already has both buttons, and hidden again once
      the Contact section — and the brief itself — is reached.
    Only below 768px; desktop never shows it. */
 export default function MobileActionBar() {
   const [pastHero, setPastHero] = useState(false)
   const [inContact, setInContact] = useState(false)
-  const [scrollingDown, setScrollingDown] = useState(false)
 
   useEffect(() => {
     const hero = ScrollTrigger.create({
@@ -36,24 +35,13 @@ export default function MobileActionBar() {
       onRefresh: (self) => setInContact(self.progress > 0),
     })
 
-    // direction, with a small dead zone so a wobble doesn't make it flicker
-    let last = window.scrollY
-    const onScroll = () => {
-      const y = window.scrollY
-      if (y > last + 10) setScrollingDown(true)
-      else if (y < last - 10) setScrollingDown(false)
-      if (Math.abs(y - last) > 10) last = y
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-
     return () => {
       hero.kill()
       contact.kill()
-      window.removeEventListener('scroll', onScroll)
     }
   }, [])
 
-  const visible = pastHero && !inContact && !scrollingDown
+  const visible = pastHero && !inContact
 
   return (
     <div
