@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type CSSProperties } from 'react'
+import { useEffect, useLayoutEffect, useRef, type CSSProperties, type RefObject } from 'react'
 import Reveal from './Reveal'
 import Roll from './Roll'
 import CharSwap from './CharSwap'
@@ -92,6 +92,92 @@ export default function Work() {
   )
 }
 
+
+/* Phones, desktop-style screenshots only: the strip glides slowly to one end and
+   back so the whole screen is revealed without the visitor doing anything.
+   - runs only while the strip is on screen, and only below 1024px;
+   - any touch, drag or wheel hands control to the visitor; it picks the glide
+     up again 2.2s after they stop (flick momentum included);
+   - off entirely for visitors who prefer reduced motion. */
+function useAutoPan(ref: RefObject<HTMLDivElement | null>, enabled: boolean) {
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !enabled || prefersReducedMotion()) return
+
+    const small = window.matchMedia('(max-width: 1023px)')
+    const pos = { x: 0 }
+    let tween: gsap.core.Tween | undefined
+    let resume: number | undefined
+    let visible = false
+    let lastSet = -1
+
+    const maxScroll = () => el.scrollWidth - el.clientWidth
+
+    const stop = () => {
+      tween?.kill()
+      tween = undefined
+      window.clearTimeout(resume)
+    }
+
+    // glide to whichever end is further away, then turn round and come back
+    const run = () => {
+      stop()
+      const max = maxScroll()
+      if (!small.matches || !visible || max <= 8) return
+      pos.x = el.scrollLeft
+      const target = pos.x < max / 2 ? max : 0
+      tween = gsap.to(pos, {
+        x: target,
+        duration: 1 + (Math.abs(target - pos.x) / max) * 8,
+        ease: 'sine.inOut',
+        onUpdate: () => {
+          lastSet = pos.x
+          el.scrollLeft = pos.x
+        },
+        onComplete: () => {
+          resume = window.setTimeout(run, 600)
+        },
+      })
+    }
+
+    const takeOver = () => {
+      stop()
+      resume = window.setTimeout(run, 2200)
+    }
+
+    // a scroll event we did not cause means the visitor is driving
+    const onScroll = () => {
+      if (Math.abs(el.scrollLeft - lastSet) > 1.5) takeOver()
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting
+        if (visible) resume = window.setTimeout(run, 800)
+        else stop()
+      },
+      { threshold: 0.4 },
+    )
+    observer.observe(el)
+
+    el.addEventListener('touchstart', takeOver, { passive: true })
+    el.addEventListener('pointerdown', takeOver, { passive: true })
+    el.addEventListener('wheel', takeOver, { passive: true })
+    el.addEventListener('scroll', onScroll, { passive: true })
+    small.addEventListener('change', run)
+
+    return () => {
+      stop()
+      observer.disconnect()
+      el.removeEventListener('touchstart', takeOver)
+      el.removeEventListener('pointerdown', takeOver)
+      el.removeEventListener('wheel', takeOver)
+      el.removeEventListener('scroll', onScroll)
+      small.removeEventListener('change', run)
+    }
+  }, [ref, enabled])
+}
+
 function Panel({
   project,
   total,
@@ -111,6 +197,8 @@ function Panel({
       }
     : {}
   const Wrapper = (project.href ? 'a' : 'div') as 'a'
+  const shot = useRef<HTMLDivElement>(null)
+  useAutoPan(shot, !project.mobileImage)
 
   return (
     <article
@@ -148,6 +236,7 @@ function Panel({
             height are both capped and the image keeps its own proportions, so
             nothing is cropped; it is never drawn larger than its own pixels. */}
         <div
+          ref={shot}
           className={`panel-shot flex items-start gap-4 [-ms-overflow-style:none] [scrollbar-width:none] lg:justify-center lg:overflow-visible [&::-webkit-scrollbar]:hidden ${
             /* phones with a mobile screenshot: just show it, centred. Without
                one, fall back to the desktop shot as a swipeable strip. */
@@ -181,7 +270,7 @@ function Panel({
         </div>
         {!project.mobileImage && (
           <p className="-mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-dim lg:hidden">
-            Swipe to see the full screen →
+            Gliding across · touch to take over
           </p>
         )}
 
