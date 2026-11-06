@@ -5,6 +5,9 @@ import { gsap, prefersReducedMotion } from '../lib/motion'
 import demoPreview from '../assets/demo-preview.webp'
 import crostaPreview from '../assets/crosta-preview.webp'
 import barkatPreview from '../assets/barkat-preview.webp'
+import quickbillPreview from '../assets/quickbill-preview.webp'
+import pdfstudioPreview from '../assets/pdfstudio-preview.webp'
+import limsPreview from '../assets/lims-preview.webp'
 
 /* Every entry is real work. "Live" ones link to the running site; the
    "In development" ones have no public URL yet, so they don't link — and carry
@@ -19,9 +22,8 @@ type Project = {
   tags: string[]
   href?: string
   cta?: string
-  image?: string
-  imageAlt?: string
-  mark?: string
+  image: string
+  imageAlt: string
 }
 
 const PROJECTS: Project[] = [
@@ -76,7 +78,8 @@ const PROJECTS: Project[] = [
     blurb:
       "The web platform for Lifeline Institute of Medical Sciences — a department-by-department services directory, quick actions for patients, and a structure built to grow across every service the hospital offers.",
     tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Accessibility'],
-    mark: 'LIMS',
+    image: limsPreview,
+    imageAlt: 'LIMS hospital home page — find a doctor or department',
   },
   {
     index: '05',
@@ -87,7 +90,8 @@ const PROJECTS: Project[] = [
     blurb:
       'A Tally-style GST quotation and tax-invoice generator for Indian small businesses — a tested calculation engine, financial-year numbering, and Firestore sync that switches on with a single credential.',
     tags: ['Next.js', 'TypeScript', 'Firestore', 'Cloudflare'],
-    mark: 'QB',
+    image: quickbillPreview,
+    imageAlt: 'QuickBill home screen — quotations, parties and items',
   },
   {
     index: '06',
@@ -98,7 +102,8 @@ const PROJECTS: Project[] = [
     blurb:
       'A PDF and document editor that runs on your own machine — a Python engine behind a desktop interface, built for editing files without handing them to a web service.',
     tags: ['Python', 'Desktop App', 'PDF Engine', 'Local-first'],
-    mark: 'PDF',
+    image: pdfstudioPreview,
+    imageAlt: 'PDFStudio home screen — 48 PDF tools',
   },
 ]
 
@@ -152,11 +157,13 @@ function ProjectRow({ project, flip }: { project: Project; flip: boolean }) {
           scrollTrigger: { trigger: el, start: 'top 92%', end: 'top 38%', scrub: true },
         },
       )
+      /* The whole frame drifts, not the picture inside it — screenshots are
+         shown whole, never cropped or scaled past their edges. */
       gsap.fromTo(
-        '.pr-media',
-        { yPercent: -6 },
+        '.pr-frame',
+        { yPercent: -3 },
         {
-          yPercent: 6,
+          yPercent: 3,
           ease: 'none',
           scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true },
         },
@@ -221,32 +228,13 @@ function ProjectRow({ project, flip }: { project: Project; flip: boolean }) {
         </div>
 
         <div className={`lg:col-span-7 ${flip ? 'lg:order-1' : ''}`}>
-          <div className="pr-frame panel relative aspect-[16/11] overflow-hidden rounded-t-xl">
-            {project.image ? (
-              <img
-                src={project.image}
-                alt={project.imageAlt}
-                className="pr-media absolute -top-[12%] left-0 h-[124%] w-full object-cover object-top"
-              />
-            ) : (
-              <MarkPanel mark={project.mark ?? ''} />
-            )}
+          {/* Natural height, no fixed aspect: screenshots are shown whole. */}
+          <div className="pr-frame panel relative overflow-hidden rounded-t-xl">
+            <img src={project.image} alt={project.imageAlt} className="block h-auto w-full" />
           </div>
         </div>
       </Wrapper>
     </article>
-  )
-}
-
-/* Stand-in media for projects with no public screenshot yet: a typographic
-   mark on the house glow, so the row still has a visual anchor. */
-function MarkPanel({ mark }: { mark: string }) {
-  return (
-    <div className="pr-media absolute inset-[-8%] flex items-center justify-center bg-[radial-gradient(60%_60%_at_50%_45%,rgba(255,59,78,0.22),transparent_70%)]">
-      <span className="font-sans text-[clamp(5rem,16vw,12rem)] font-extrabold tracking-[-0.04em] text-ivory/90">
-        {mark}
-      </span>
-    </div>
   )
 }
 
