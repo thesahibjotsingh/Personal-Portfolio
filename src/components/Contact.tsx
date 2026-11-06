@@ -32,7 +32,7 @@ function validate(v: typeof DEFAULTS): Errors {
 function FieldError({ id, text }: { id: string; text?: string }) {
   if (!text) return null
   return (
-    <p id={id} role="alert" className="mt-1.5 text-[12px] text-[#fb7185]">
+    <p id={id} role="alert" className="mt-1.5 text-[12px] text-[var(--err)]">
       {text}
     </p>
   )

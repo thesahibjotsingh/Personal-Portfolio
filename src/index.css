@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+/* Registering the theme colours as real <color> properties lets the browser
+   interpolate them, so flipping data-theme cross-fades the whole page instead
+   of snapping. Everything that reads these variables fades with them. */
+@property --color-void { syntax: '<color>'; inherits: true; initial-value: #0a0909; }
+@property --color-panel { syntax: '<color>'; inherits: true; initial-value: #0c0c0c; }
+@property --color-ivory { syntax: '<color>'; inherits: true; initial-value: #f4f1ea; }
+@property --color-carnation { syntax: '<color>'; inherits: true; initial-value: #ee4658; }
+@property --color-carnation-deep { syntax: '<color>'; inherits: true; initial-value: #cc2a3d; }
+@property --color-muted { syntax: '<color>'; inherits: true; initial-value: #9b9b9b; }
+@property --color-dim { syntax: '<color>'; inherits: true; initial-value: #7a7a7a; }
+@property --color-hairline { syntax: '<color>'; inherits: true; initial-value: rgba(255, 255, 255, 0.09); }
+@property --err { syntax: '<color>'; inherits: true; initial-value: #fb7185; }
+
 @theme {
   --color-void: #0a0909;
   --color-panel: #0c0c0c;
@@ -12,11 +25,41 @@
   --color-hairline: rgba(255, 255, 255, 0.09);
   /* official WhatsApp brand green */
   --wa-green: #25d366;
+  --err: #fb7185;
 
   --font-display: "Playfair Display", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --font-script: "Dancing Script", ui-serif, cursive;
+}
+
+/* Light theme — switched on by ThemeSwitch while the Contact section is in
+   view. Warm ivory page, near-black type, and a deeper red so small red text
+   keeps its contrast on the light ground. */
+:root {
+  color-scheme: dark;
+  transition:
+    --color-void 0.5s ease,
+    --color-panel 0.5s ease,
+    --color-ivory 0.5s ease,
+    --color-carnation 0.5s ease,
+    --color-carnation-deep 0.5s ease,
+    --color-muted 0.5s ease,
+    --color-dim 0.5s ease,
+    --color-hairline 0.5s ease,
+    --err 0.5s ease;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+  --color-void: #ebe7e0;
+  --color-panel: #e2ddd5;
+  --color-ivory: #181514;
+  --color-carnation: #cf2d41;
+  --color-carnation-deep: #b5182c;
+  --color-muted: #4f4a46;
+  --color-dim: #6d6761;
+  --color-hairline: rgba(24, 21, 20, 0.14);
+  --err: #c0263d;
 }
 
 @layer base {
@@ -73,7 +116,7 @@
     background: var(--color-void);
   }
   ::-webkit-scrollbar-thumb {
-    background: #2a2a2a;
+    background: color-mix(in srgb, var(--color-ivory) 22%, var(--color-void));
     border: 2px solid var(--color-void);
   }
 }
@@ -94,7 +137,11 @@
   }
 
   .panel {
-    background: linear-gradient(165deg, rgba(24, 24, 24, 0.92), rgba(12, 12, 12, 0.92));
+    background: linear-gradient(
+      165deg,
+      color-mix(in srgb, color-mix(in srgb, var(--color-ivory) 6%, var(--color-void)) 92%, transparent),
+      color-mix(in srgb, color-mix(in srgb, var(--color-ivory) 2%, var(--color-void)) 92%, transparent)
+    );
     border: 1px solid var(--color-hairline);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
   }
@@ -178,7 +225,11 @@
   }
 
   .glass {
-    background: linear-gradient(165deg, rgba(24, 24, 24, 0.92), rgba(12, 12, 12, 0.92));
+    background: linear-gradient(
+      165deg,
+      color-mix(in srgb, color-mix(in srgb, var(--color-ivory) 6%, var(--color-void)) 92%, transparent),
+      color-mix(in srgb, color-mix(in srgb, var(--color-ivory) 2%, var(--color-void)) 92%, transparent)
+    );
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid var(--color-hairline);
@@ -268,7 +319,7 @@
   input[type='email'],
   textarea,
   select {
-    background: rgba(11, 10, 9, 0.5);
+    background: color-mix(in srgb, var(--color-ivory) 6%, transparent);
     border: 1px solid var(--color-hairline);
     color: var(--color-ivory);
     border-radius: 3px;
@@ -448,7 +499,7 @@ body::after {
   width: 34px;
   height: 34px;
   margin: -17px 0 0 -17px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid color-mix(in srgb, var(--color-ivory) 55%, transparent);
   border-radius: 999px;
   transition:
     transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -481,7 +532,7 @@ body::after {
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-ivory);
+  color: #f4f1ea; /* the pill is always dark glass, whatever the page theme */
   opacity: 0;
   transition:
     opacity 0.25s ease,

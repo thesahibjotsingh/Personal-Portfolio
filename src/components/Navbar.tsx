@@ -291,7 +291,7 @@ function MenuRow({
     <a
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className="flex items-center justify-between gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5 focus-visible:bg-white/5"
+      className="flex items-center justify-between gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-ivory/10 focus-visible:bg-ivory/10"
     >
       <span className="min-w-0">
         <span className="block truncate text-[14px] font-medium text-ivory">{title}</span>
@@ -372,7 +372,7 @@ function DropdownContent({ label }: { label: string }) {
               <li key={t.name}>
                 <a
                   href="#stack"
-                  className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5 focus-visible:bg-white/5"
+                  className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors hover:bg-ivory/10 focus-visible:bg-ivory/10"
                 >
                   <img src={t.logo} alt="" className="h-5 w-5 object-contain" />
                   <span className="text-[14px] text-ivory">{t.name}</span>

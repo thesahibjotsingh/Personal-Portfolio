@@ -9,6 +9,7 @@ import Footer from './components/Footer'
 import SmoothScroll from './components/SmoothScroll'
 import Cursor from './components/Cursor'
 import ScrollProgress from './components/ScrollProgress'
+import ThemeSwitch from './components/ThemeSwitch'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <SmoothScroll />
       <Cursor />
       <ScrollProgress />
+      <ThemeSwitch />
       <Navbar />
       <main id="main">
         <Hero />
