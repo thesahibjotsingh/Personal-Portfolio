@@ -13,6 +13,28 @@ const DEFAULTS = {
 }
 
 type Toast = { type: 'success' | 'error'; text: string } | null
+type Field = 'name' | 'email' | 'message'
+type Errors = Partial<Record<Field, string>>
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+function validate(v: typeof DEFAULTS): Errors {
+  const errors: Errors = {}
+  if (!v.name.trim()) errors.name = 'Tell me your name.'
+  if (!v.email.trim()) errors.email = 'Add an email so I can reply.'
+  else if (!EMAIL_RE.test(v.email.trim())) errors.email = "That email doesn't look right."
+  if (v.message.trim().length < 10) errors.message = 'A sentence or two about the project helps.'
+  return errors
+}
+
+function FieldError({ id, text }: { id: string; text?: string }) {
+  if (!text) return null
+  return (
+    <p id={id} role="alert" className="mt-1.5 text-[12px] text-[#fb7185]">
+      {text}
+    </p>
+  )
+}
 
 const LABEL_CLASSES =
   'mb-2 block font-mono text-[10px] uppercase tracking-[0.12em] text-dim'
@@ -22,7 +44,20 @@ export default function Contact() {
   const [sending, setSending] = useState(false)
   const [toast, setToast] = useState<Toast>(null)
   const [values, setValues] = useState(DEFAULTS)
+  const [errors, setErrors] = useState<Errors>({})
+  /* Hidden field real visitors never see; bots that fill every input do. */
+  const [trap, setTrap] = useState('')
   const toastTimer = useRef<number | undefined>(undefined)
+
+  const setField = (key: keyof typeof DEFAULTS, value: string) => {
+    setValues((prev) => ({ ...prev, [key]: value }))
+    setErrors((prev) => {
+      if (!(key in prev)) return prev
+      const next = { ...prev }
+      delete next[key as Field]
+      return next
+    })
+  }
 
   useEffect(() => () => window.clearTimeout(toastTimer.current), [])
 
@@ -35,6 +70,20 @@ export default function Contact() {
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (sending) return
+
+    /* a filled trap is a bot: pretend it worked and send nothing */
+    if (trap) {
+      showToast('success', 'Message sent. Thanks for reaching out.')
+      return
+    }
+
+    const found = validate(values)
+    setErrors(found)
+    const firstBad = (['name', 'email', 'message'] as const).find((k) => found[k])
+    if (firstBad) {
+      document.getElementById(`contact-${firstBad}`)?.focus()
+      return
+    }
 
     setSending(true)
     try {
@@ -55,10 +104,10 @@ export default function Contact() {
         },
         EMAILJS.publicKey,
       )
-      showToast('success', 'Message sent successfully!')
+      showToast('success', 'Message sent. Thanks for reaching out.')
       setValues(DEFAULTS)
     } catch {
-      showToast('error', 'Failed to send message. Please try again.')
+      showToast('error', "Couldn't send your message. Try again, or email me directly.")
     } finally {
       setSending(false)
     }
@@ -115,7 +164,18 @@ export default function Contact() {
           <Reveal className="md:col-span-3" delay={100}>
             <div className="panel relative h-full p-6 md:p-8">
               <CornerMarks />
-              <form onSubmit={submit} className="space-y-5">
+              <form onSubmit={submit} noValidate className="space-y-5">
+                <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                  <label htmlFor="contact-website">Leave this field empty</label>
+                  <input
+                    id="contact-website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={trap}
+                    onChange={(e) => setTrap(e.target.value)}
+                  />
+                </div>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
                     <label className={LABEL_CLASSES} htmlFor="contact-name">
@@ -125,11 +185,15 @@ export default function Contact() {
                       id="contact-name"
                       type="text"
                       required
+                      autoComplete="name"
+                      aria-invalid={errors.name ? true : undefined}
+                      aria-describedby={errors.name ? 'contact-name-error' : undefined}
                       value={values.name}
-                      onChange={(e) => setValues({ ...values, name: e.target.value })}
+                      onChange={(e) => setField('name', e.target.value)}
                       placeholder="Neha Parmar"
                       className={FIELD_CLASSES}
                     />
+                    <FieldError id="contact-name-error" text={errors.name} />
                   </div>
                   <div>
                     <label className={LABEL_CLASSES} htmlFor="contact-email">
@@ -139,11 +203,15 @@ export default function Contact() {
                       id="contact-email"
                       type="email"
                       required
+                      autoComplete="email"
+                      aria-invalid={errors.email ? true : undefined}
+                      aria-describedby={errors.email ? 'contact-email-error' : undefined}
                       value={values.email}
-                      onChange={(e) => setValues({ ...values, email: e.target.value })}
+                      onChange={(e) => setField('email', e.target.value)}
                       placeholder="neha@company.com"
                       className={FIELD_CLASSES}
                     />
+                    <FieldError id="contact-email-error" text={errors.email} />
                   </div>
                 </div>
 
@@ -154,7 +222,7 @@ export default function Contact() {
                   <select
                     id="contact-type"
                     value={values.type}
-                    onChange={(e) => setValues({ ...values, type: e.target.value })}
+                    onChange={(e) => setField('type', e.target.value)}
                     className={FIELD_CLASSES}
                   >
                     {PROJECT_TYPES.map((type) => (
@@ -171,11 +239,14 @@ export default function Contact() {
                     id="contact-message"
                     required
                     rows={4}
+                    aria-invalid={errors.message ? true : undefined}
+                    aria-describedby={errors.message ? 'contact-message-error' : undefined}
                     value={values.message}
-                    onChange={(e) => setValues({ ...values, message: e.target.value })}
+                    onChange={(e) => setField('message', e.target.value)}
                     placeholder="What are you building, and what does it need to do on day one?"
                     className={`${FIELD_CLASSES} resize-none`}
                   />
+                  <FieldError id="contact-message-error" text={errors.message} />
                 </div>
 
                 <button

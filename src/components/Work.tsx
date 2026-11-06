@@ -2,110 +2,8 @@ import { useLayoutEffect, useRef } from 'react'
 import Reveal from './Reveal'
 import SectionLabel from './SectionLabel'
 import { gsap, prefersReducedMotion } from '../lib/motion'
-import demoPreview from '../assets/demo-preview.webp'
-import crostaPreview from '../assets/crosta-preview.webp'
-import barkatPreview from '../assets/barkat-preview.webp'
-import quickbillPreview from '../assets/quickbill-preview.webp'
-import pdfstudioPreview from '../assets/pdfstudio-preview.webp'
-import limsPreview from '../assets/lims-preview.webp'
-
-/* Every entry is real work. "Live" ones link to the running site; the
-   "In development" ones have no public URL yet, so they don't link — and carry
-   no invented metrics or client claims. */
-type Project = {
-  index: string
-  fig: string
-  title: string
-  meta: string
-  status: 'Live' | 'In development'
-  blurb: string
-  tags: string[]
-  href?: string
-  cta?: string
-  image: string
-  imageAlt: string
-}
-
-const PROJECTS: Project[] = [
-  {
-    index: '01',
-    fig: 'Fig. 01 — Cloud POS',
-    title: 'Custom Cloud-Hosted POS System',
-    meta: 'Own product',
-    status: 'Live',
-    blurb:
-      'A register that syncs across every terminal in real time — order queues, inventory and receipts, built on Firebase so a dropped connection never means a lost sale.',
-    tags: ['Firebase', 'Firestore', 'JavaScript', 'Real-time Sync', 'PWA'],
-    href: 'https://demo-pos-system.pages.dev/',
-    cta: 'View live demo',
-    image: demoPreview,
-    imageAlt: 'Artisanal POS live demo — menu ordering screen',
-  },
-  {
-    index: '02',
-    fig: 'Fig. 02 — E-Commerce',
-    title: 'The Crosta',
-    meta: 'thecrosta.com',
-    status: 'Live',
-    blurb:
-      "An artisanal food brand's storefront — product storytelling, a checkout that doesn't fight the customer, and a design system built around the product photography.",
-    tags: ['E-Commerce', 'Custom CMS', 'HTML5', 'CSS3', 'JavaScript', 'Responsive'],
-    href: 'https://thecrosta.com',
-    cta: 'Visit site',
-    image: crostaPreview,
-    imageAlt: 'The Crosta e-commerce storefront',
-  },
-  {
-    index: '03',
-    fig: 'Fig. 03 — Corporate',
-    title: 'Barkat & Company',
-    meta: 'barkatandcompany.com',
-    status: 'Live',
-    blurb:
-      'A corporate web platform built for credibility first — clear service architecture, fast load times, and a content structure the client can maintain without a developer.',
-    tags: ['Corporate Site', 'SEO Structure', 'HTML5', 'CSS3', 'JavaScript', 'Responsive'],
-    href: 'https://barkatandcompany.com',
-    cta: 'Visit site',
-    image: barkatPreview,
-    imageAlt: 'Barkat & Company corporate platform',
-  },
-  {
-    index: '04',
-    fig: 'Fig. 04 — Healthcare',
-    title: 'LIMS Hospital Platform',
-    meta: 'Lifeline Institute, Hisar',
-    status: 'In development',
-    blurb:
-      "The web platform for Lifeline Institute of Medical Sciences — a department-by-department services directory, quick actions for patients, and a structure built to grow across every service the hospital offers.",
-    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Accessibility'],
-    image: limsPreview,
-    imageAlt: 'LIMS hospital home page — find a doctor or department',
-  },
-  {
-    index: '05',
-    fig: 'Fig. 05 — Billing',
-    title: 'QuickBill',
-    meta: 'Own product',
-    status: 'In development',
-    blurb:
-      'A Tally-style GST quotation and tax-invoice generator for Indian small businesses — a tested calculation engine, financial-year numbering, and Firestore sync that switches on with a single credential.',
-    tags: ['Next.js', 'TypeScript', 'Firestore', 'Cloudflare'],
-    image: quickbillPreview,
-    imageAlt: 'QuickBill home screen — quotations, parties and items',
-  },
-  {
-    index: '06',
-    fig: 'Fig. 06 — Desktop',
-    title: 'PDFStudio',
-    meta: 'Own product',
-    status: 'In development',
-    blurb:
-      'A PDF and document editor that runs on your own machine — a Python engine behind a desktop interface, built for editing files without handing them to a web service.',
-    tags: ['Python', 'Desktop App', 'PDF Engine', 'Local-first'],
-    image: pdfstudioPreview,
-    imageAlt: 'PDFStudio home screen — 48 PDF tools',
-  },
-]
+import { CONFIG } from '../lib/config'
+import { PROJECTS, type Project } from '../lib/projects'
 
 export default function Work() {
   return (
@@ -185,7 +83,7 @@ function ProjectRow({ project }: { project: Project }) {
   const Wrapper = (project.href ? 'a' : 'div') as 'a'
 
   return (
-    <article ref={root} className="group border-t border-hairline py-10 md:py-20">
+    <article ref={root} id={project.slug} className="group border-t border-hairline py-10 md:py-20">
       {/* Image first, full width; the copy sits underneath in two columns.
           flex-col-reverse keeps the text earlier in the DOM for screen readers. */}
       <Wrapper {...linkProps} className="flex flex-col-reverse gap-8 md:gap-12">
@@ -227,7 +125,21 @@ function ProjectRow({ project }: { project: Project }) {
               ))}
             </div>
 
-            {project.href && <VisitCue label={project.cta ?? 'Visit'} />}
+            {project.href ? (
+              <VisitCue label={project.cta ?? 'Visit'} />
+            ) : (
+              <a
+                href={`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(
+                  `Hi Saheb, I'd like a walkthrough of ${project.title}.`,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline-grow mt-6 inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.12em] text-ivory transition-colors hover:text-carnation"
+              >
+                Request a walkthrough
+                <span className="sr-only"> of {project.title} (opens WhatsApp in a new tab)</span>
+              </a>
+            )}
             </div>
           </Reveal>
         </div>

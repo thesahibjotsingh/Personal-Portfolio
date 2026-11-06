@@ -109,8 +109,8 @@ export default function Hero() {
             className="hero-step mt-5 max-w-[52ch] text-[1.0625rem] leading-[1.6] text-muted md:leading-[1.75] xl:text-[1.1875rem]"
             style={step(3)}
           >
-            I engineer platforms for ambitious brands that establish absolute trust,
-            generate leads, and make your competition look ancient.
+            I build the whole product — the interface, the data behind it and the
+            deploy — for brands that need to be taken seriously online.
           </p>
 
           <div className="hero-step mt-8 flex flex-wrap items-center gap-4" style={step(4)}>

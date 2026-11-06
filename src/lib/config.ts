@@ -12,7 +12,10 @@ export const CONFIG = {
      work gets finished. Add an entry here and the icon returns — `Icon`
      still carries github/linkedin/x artwork ready for it.
      Verified if GitHub is ever wanted: https://github.com/thesahibjotsingh */
-  socials: [] as { label: string; href: string }[],
+  socials: [{ label: 'GitHub', href: 'https://github.com/thesahibjotsingh' }] as {
+    label: string
+    href: string
+  }[],
 } as const
 
 /* EmailJS keys are publishable by design — the public key is meant to ship

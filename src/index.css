@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-void: #000000;
+  --color-void: #0a0909;
   --color-panel: #0c0c0c;
   --color-ivory: #f4f1ea;
   --color-paper: #ffffff;
-  --color-carnation: #ff3b4e;
-  --color-carnation-deep: #d81e32;
+  --color-carnation: #ee4658;
+  --color-carnation-deep: #cc2a3d;
   --color-muted: #9b9b9b;
   --color-dim: #7a7a7a;
   --color-hairline: rgba(255, 255, 255, 0.09);
@@ -112,7 +112,7 @@
     padding: 1px;
     background: radial-gradient(
       360px circle at var(--x, 50%) var(--y, 50%),
-      rgba(255, 59, 78, 0.75),
+      rgba(238, 70, 88, 0.75),
       transparent 45%
     );
     -webkit-mask:
@@ -132,7 +132,7 @@
     border-radius: inherit;
     background: radial-gradient(
       420px circle at var(--x, 50%) var(--y, 50%),
-      rgba(255, 59, 78, 0.1),
+      rgba(238, 70, 88, 0.1),
       transparent 55%
     );
     opacity: 0;
@@ -298,7 +298,7 @@
   .chip:hover {
     border-color: var(--color-carnation);
     transform: translateY(-1px);
-    background: rgba(255, 59, 78, 0.06);
+    background: rgba(238, 70, 88, 0.06);
   }
 
   .underline-grow {
@@ -342,7 +342,7 @@
   position: absolute;
   inset: 0;
   z-index: 20;
-  background: #000;
+  background: var(--color-void);
   pointer-events: none;
   opacity: 1;
   transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
@@ -382,6 +382,52 @@
   to {
     transform: translateX(-50%);
   }
+}
+
+/* project rows are anchor targets for the Work menu — clear the fixed nav */
+article[id] {
+  scroll-margin-top: calc(var(--nav-h, 74px) + 24px);
+}
+
+/* skip link: off-screen until a keyboard user tabs to it */
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.7rem 1.1rem;
+  background: var(--color-ivory);
+  color: #000;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 3px;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* fine film grain over the whole page — breaks up the flat digital black */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* project frames lift and pick up a red glow on hover (no scale — the
+   screenshots must never be cropped) */
+.pr-frame {
+  transition:
+    box-shadow 0.5s ease,
+    border-color 0.5s ease;
+}
+.group:hover .pr-frame {
+  border-color: rgba(238, 70, 88, 0.45);
+  box-shadow: 0 30px 80px -34px rgba(238, 70, 88, 0.45);
 }
 
 /* custom cursor (see Cursor.tsx) */
@@ -472,10 +518,10 @@ html.lenis {
 @keyframes availPulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 59, 78, 0.45);
+    box-shadow: 0 0 0 0 rgba(238, 70, 88, 0.45);
   }
   50% {
-    box-shadow: 0 0 0 7px rgba(255, 59, 78, 0);
+    box-shadow: 0 0 0 7px rgba(238, 70, 88, 0);
   }
 }
 

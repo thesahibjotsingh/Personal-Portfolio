@@ -28,6 +28,10 @@ const MEDIA_STYLE = {
   animation: 'mediaIn 1s cubic-bezier(.22,1,.36,1) both',
   maskImage: BOTTOM_FADE,
   WebkitMaskImage: BOTTOM_FADE,
+  /* The clip's background is pure #000 but the page is now a tinted
+     near-black. `lighten` keeps the lighter statue as-is and lets the page
+     colour win everywhere the clip is black, so no box shows. */
+  mixBlendMode: 'lighten' as const,
 }
 
 const clamp = (value: number, min: number, max: number) =>
