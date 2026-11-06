@@ -29,5 +29,7 @@ export const PROJECT_TYPES = [
   'New POS system',
   'E-commerce platform',
   'Corporate website',
+  'Institution / hospital website',
+  'Billing or desktop software',
   'Something else',
 ] as const

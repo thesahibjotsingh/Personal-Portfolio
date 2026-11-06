@@ -324,14 +324,126 @@
 /* hero load-in stagger — delay set per child inline */
 .hero-step {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(28px);
+  filter: blur(10px);
   transition:
-    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .hero-in .hero-step {
   opacity: 1;
   transform: translateY(0);
+  filter: blur(0);
+}
+
+/* black curtain over the hero that lifts on load — dark-to-light reveal */
+.hero-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: #000;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
+}
+.hero-in .hero-curtain {
+  opacity: 0;
+}
+
+/* outlined project numerals */
+.stroke-num {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(244, 241, 234, 0.28);
+  transition: -webkit-text-stroke-color 0.4s ease;
+}
+.group:hover .stroke-num {
+  -webkit-text-stroke-color: var(--color-carnation);
+}
+
+/* opposing-direction logo marquees */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+.marquee.rev .marquee-track {
+  animation-direction: reverse;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* custom cursor (see Cursor.tsx) */
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.cursor[data-ready='true'] {
+  opacity: 1;
+}
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+.cursor[data-state='link'] .cursor-ring {
+  transform: scale(1.5);
+  border-color: var(--color-carnation);
+}
+.cursor[data-state='label'] .cursor-ring {
+  transform: scale(2.4);
+  background: var(--color-carnation);
+  border-color: transparent;
+}
+.cursor-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #000;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.cursor[data-state='label'] .cursor-label {
+  opacity: 1;
+}
+
+/* Lenis owns smooth scrolling; the native behaviour would fight it */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+html.lenis {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 @keyframes mediaIn {
@@ -393,6 +505,16 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
+  .hero-step {
+    filter: none;
+  }
+  .hero-curtain {
+    display: none;
   }
 
   /* the reveal transition is what makes content appear — pin it visible instead */

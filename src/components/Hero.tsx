@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { gsap, prefersReducedMotion } from '../lib/motion'
 import HeroMedia from './HeroMedia'
 import Icon from './Icon'
 import { CONFIG } from '../lib/config'
@@ -16,10 +17,26 @@ const BUTTON_BASE =
 
 export default function Hero() {
   const [entered, setEntered] = useState(false)
+  const copy = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
     return () => cancelAnimationFrame(id)
+  }, [])
+
+  /* As the hero scrolls away the copy lifts and fades, so the next section
+     arrives over a settled frame instead of a hard cut. */
+  useEffect(() => {
+    if (prefersReducedMotion() || !copy.current) return
+    const ctx = gsap.context(() => {
+      gsap.to(copy.current, {
+        yPercent: -14,
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: { trigger: '#top', start: 'top top', end: '75% top', scrub: true },
+      })
+    })
+    return () => ctx.revert()
   }, [])
 
   return (
@@ -34,10 +51,12 @@ export default function Hero() {
       }`}
     >
       <HeroMedia />
+      {/* the page opens in black and the hero surfaces out of it */}
+      <div className="hero-curtain" aria-hidden="true" />
 
       {/* tighter vertical rhythm on phones so the statue reaches the first screen */}
       <div className="relative z-10 order-1 flex flex-1 items-center px-6 py-6 md:px-8 md:py-10 lg:min-h-[calc(100svh-var(--nav-h,73px))] lg:py-0 lg:pl-[6vw] lg:pr-0">
-        <div className="w-full lg:w-[46%]">
+        <div ref={copy} className="w-full lg:w-[46%]">
           <p
             className="hero-step flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-dim"
             style={step(0)}

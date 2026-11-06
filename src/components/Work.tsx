@@ -1,65 +1,130 @@
+import { useLayoutEffect, useRef } from 'react'
 import Reveal from './Reveal'
 import SectionLabel from './SectionLabel'
-import { useSpotlight } from '../hooks/useSpotlight'
+import { gsap, prefersReducedMotion } from '../lib/motion'
 import demoPreview from '../assets/demo-preview.webp'
 import crostaPreview from '../assets/crosta-preview.webp'
 import barkatPreview from '../assets/barkat-preview.webp'
 
-/* Every card here is real shipped work, linked to its live site — see PRODUCT.md
-   principle #1: no invented clients, metrics, or testimonials. */
-const COMPACT_STUDIES = [
+/* Every entry is real work. "Live" ones link to the running site; the
+   "In development" ones have no public URL yet, so they don't link — and carry
+   no invented metrics or client claims. */
+type Project = {
+  index: string
+  fig: string
+  title: string
+  meta: string
+  status: 'Live' | 'In development'
+  blurb: string
+  tags: string[]
+  href?: string
+  cta?: string
+  image?: string
+  imageAlt?: string
+  mark?: string
+}
+
+const PROJECTS: Project[] = [
   {
+    index: '01',
+    fig: 'Fig. 01 — Cloud POS',
+    title: 'Custom Cloud-Hosted POS System',
+    meta: 'Own product',
+    status: 'Live',
+    blurb:
+      'A register that syncs across every terminal in real time — order queues, inventory and receipts, built on Firebase so a dropped connection never means a lost sale.',
+    tags: ['Firebase', 'Firestore', 'JavaScript', 'Real-time Sync', 'PWA'],
+    href: 'https://demo-pos-system.pages.dev/',
+    cta: 'View live demo',
+    image: demoPreview,
+    imageAlt: 'Artisanal POS live demo — menu ordering screen',
+  },
+  {
+    index: '02',
     fig: 'Fig. 02 — E-Commerce',
     title: 'The Crosta',
-    tag: 'thecrosta.com',
+    meta: 'thecrosta.com',
+    status: 'Live',
     blurb:
       "An artisanal food brand's storefront — product storytelling, a checkout that doesn't fight the customer, and a design system built around the product photography.",
     tags: ['E-Commerce', 'Custom CMS', 'HTML5', 'CSS3', 'JavaScript', 'Responsive'],
     href: 'https://thecrosta.com',
+    cta: 'Visit site',
     image: crostaPreview,
     imageAlt: 'The Crosta e-commerce storefront',
-    delay: 90,
   },
   {
+    index: '03',
     fig: 'Fig. 03 — Corporate',
     title: 'Barkat & Company',
-    tag: 'barkatandcompany.com',
+    meta: 'barkatandcompany.com',
+    status: 'Live',
     blurb:
       'A corporate web platform built for credibility first — clear service architecture, fast load times, and a content structure the client can maintain without a developer.',
     tags: ['Corporate Site', 'SEO Structure', 'HTML5', 'CSS3', 'JavaScript', 'Responsive'],
     href: 'https://barkatandcompany.com',
+    cta: 'Visit site',
     image: barkatPreview,
     imageAlt: 'Barkat & Company corporate platform',
-    delay: 170,
+  },
+  {
+    index: '04',
+    fig: 'Fig. 04 — Healthcare',
+    title: 'LIMS Hospital Platform',
+    meta: 'Lifeline Institute, Hisar',
+    status: 'In development',
+    blurb:
+      "The web platform for Lifeline Institute of Medical Sciences — a department-by-department services directory, quick actions for patients, and a structure built to grow across every service the hospital offers.",
+    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Accessibility'],
+    mark: 'LIMS',
+  },
+  {
+    index: '05',
+    fig: 'Fig. 05 — Billing',
+    title: 'QuickBill',
+    meta: 'Own product',
+    status: 'In development',
+    blurb:
+      'A Tally-style GST quotation and tax-invoice generator for Indian small businesses — a tested calculation engine, financial-year numbering, and Firestore sync that switches on with a single credential.',
+    tags: ['Next.js', 'TypeScript', 'Firestore', 'Cloudflare'],
+    mark: 'QB',
+  },
+  {
+    index: '06',
+    fig: 'Fig. 06 — Desktop',
+    title: 'PDFStudio',
+    meta: 'Own product',
+    status: 'In development',
+    blurb:
+      'A PDF and document editor that runs on your own machine — a Python engine behind a desktop interface, built for editing files without handing them to a web service.',
+    tags: ['Python', 'Desktop App', 'PDF Engine', 'Local-first'],
+    mark: 'PDF',
   },
 ]
 
 export default function Work() {
   return (
-    /* No extra top padding needed: the hero is now a full 100svh, so this
-       section already starts below the fold on its own. */
-    <section id="work" className="px-6 py-14 md:px-8 md:py-16">
+    <section id="work" className="px-6 py-14 md:px-8 md:py-24">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
-        <SectionLabel>Featured Work</SectionLabel>
+        <SectionLabel>Selected Work</SectionLabel>
 
         <div>
           <Reveal>
-            <div className="mb-12 flex flex-wrap items-end justify-between gap-4">
-              <h2 className="font-display text-4xl text-ivory md:text-5xl">
-                Three platforms,{' '}
-                <span className="italic text-carnation-deep">shipped</span>.
+            <div className="mb-14 flex flex-wrap items-end justify-between gap-4 md:mb-20">
+              <h2 className="font-display text-4xl font-normal text-ivory md:text-6xl">
+                Built end to end,{' '}
+                <span className="italic text-carnation-deep">in the open</span>.
               </h2>
               <p className="max-w-xs text-[13.5px] leading-relaxed text-muted">
-                A points-of-sale system built from scratch, and two brands whose entire web
-                presence was designed and built end to end.
+                Three platforms live today, three more in the workshop — a hospital site, a
+                billing suite and a desktop PDF editor.
               </p>
             </div>
           </Reveal>
 
-          <div className="grid gap-5 md:grid-cols-2">
-            <FeaturedStudy />
-            {COMPACT_STUDIES.map((study) => (
-              <CompactStudy key={study.title} {...study} />
+          <div>
+            {PROJECTS.map((project, i) => (
+              <ProjectRow key={project.title} project={project} flip={i % 2 === 1} />
             ))}
           </div>
         </div>
@@ -68,141 +133,139 @@ export default function Work() {
   )
 }
 
-function FeaturedStudy() {
-  const { ref, onMouseMove } = useSpotlight<HTMLDivElement>()
+function ProjectRow({ project, flip }: { project: Project; flip: boolean }) {
+  const root = useRef<HTMLElement>(null)
+
+  /* Two scrubbed motions: the frame opens up from an inset clip as it enters,
+     and the media inside drifts against the scroll for depth. */
+  useLayoutEffect(() => {
+    const el = root.current
+    if (!el || prefersReducedMotion()) return
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.pr-frame',
+        { clipPath: 'inset(14% 10% 14% 10%)' },
+        {
+          clipPath: 'inset(0% 0% 0% 0%)',
+          ease: 'none',
+          scrollTrigger: { trigger: el, start: 'top 92%', end: 'top 38%', scrub: true },
+        },
+      )
+      gsap.fromTo(
+        '.pr-media',
+        { yPercent: -6 },
+        {
+          yPercent: 6,
+          ease: 'none',
+          scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true },
+        },
+      )
+    }, el)
+
+    return () => ctx.revert()
+  }, [])
+
+  const linkProps = project.href
+    ? {
+        href: project.href,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        'aria-label': `${project.cta} — ${project.title} (opens in a new tab)`,
+        'data-cursor': 'View',
+      }
+    : {}
+  const Wrapper = (project.href ? 'a' : 'div') as 'a'
 
   return (
-    <Reveal className="md:col-span-2">
-      <a
-        href="https://demo-pos-system.pages.dev/"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Open the Cloud POS live demo (opens in a new tab)"
-        className="group block h-full"
+    <article ref={root} className="group border-t border-hairline py-10 md:py-16">
+      <Wrapper
+        {...linkProps}
+        className="grid items-center gap-8 lg:grid-cols-12 lg:gap-14"
       >
-        <div
-          ref={ref}
-          onMouseMove={onMouseMove}
-          className="spot panel relative flex h-full cursor-pointer flex-col justify-between overflow-hidden rounded-t-xl transition-transform duration-300 hover:-translate-y-1"
-        >
-          <CornerMarks />
-          <img
-            src={demoPreview}
-            alt="Artisanal POS live demo — menu ordering screen"
-            className="mb-4 h-56 w-full rounded-t-xl border-b border-carnation/20 object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] md:h-72"
-          />
-          <div className="flex flex-1 flex-col justify-between px-6 pb-6 md:px-8 md:pb-8">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-carnation">
-                  Fig. 01 — Cloud POS
-                </span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-dim">
-                  Own Product
-                </span>
-              </div>
-              <h3 className="mt-3 font-display text-3xl text-ivory md:text-4xl">
-                Custom Cloud-Hosted POS System
-              </h3>
-              <p className="mt-3 max-w-lg text-[14.5px] leading-relaxed text-muted">
-                A register that syncs across every terminal in real time — order queues,
-                inventory and receipts, built on Firebase so a dropped connection never
-                means a lost sale.
-              </p>
+        <div className={`lg:col-span-5 ${flip ? 'lg:order-2' : ''}`}>
+          <Reveal>
+            <span className="stroke-num font-display text-7xl leading-none md:text-8xl">
+              {project.index}
+            </span>
+
+            <div className="mt-6 flex items-center justify-between gap-3">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-carnation">
+                {project.fig}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-dim">
+                {project.meta}
+              </span>
             </div>
 
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex flex-wrap gap-2">
-                {['Firebase', 'Firestore', 'JavaScript', 'Real-time Sync', 'PWA'].map(
-                  (tag) => (
-                    <TagPill key={tag}>{tag}</TagPill>
-                  ),
-                )}
-              </div>
-              <VisitCue label="View Live Demo" />
+            <h3 className="mt-3 flex flex-wrap items-center gap-3 font-display text-3xl font-normal text-ivory md:text-4xl">
+              {project.title}
+            </h3>
+            <StatusBadge status={project.status} />
+
+            <p className="mt-4 text-[14.5px] leading-relaxed text-muted">{project.blurb}</p>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {project.tags.map((t) => (
+                <span
+                  key={t}
+                  className="chip px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.08em] text-dim"
+                >
+                  {t}
+                </span>
+              ))}
             </div>
+
+            {project.href && <VisitCue label={project.cta ?? 'Visit'} />}
+          </Reveal>
+        </div>
+
+        <div className={`lg:col-span-7 ${flip ? 'lg:order-1' : ''}`}>
+          <div className="pr-frame panel relative aspect-[16/11] overflow-hidden rounded-t-xl">
+            {project.image ? (
+              <img
+                src={project.image}
+                alt={project.imageAlt}
+                className="pr-media absolute -top-[12%] left-0 h-[124%] w-full object-cover object-top"
+              />
+            ) : (
+              <MarkPanel mark={project.mark ?? ''} />
+            )}
           </div>
         </div>
-      </a>
-    </Reveal>
+      </Wrapper>
+    </article>
   )
 }
 
-type CompactStudyProps = (typeof COMPACT_STUDIES)[number]
-
-function CompactStudy({
-  fig,
-  title,
-  tag,
-  blurb,
-  tags,
-  href,
-  image,
-  imageAlt,
-  delay,
-}: CompactStudyProps) {
-  const { ref, onMouseMove } = useSpotlight<HTMLDivElement>()
-
+/* Stand-in media for projects with no public screenshot yet: a typographic
+   mark on the house glow, so the row still has a visual anchor. */
+function MarkPanel({ mark }: { mark: string }) {
   return (
-    <Reveal delay={delay}>
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`Visit ${title} (opens in a new tab)`}
-        className="group block h-full"
-      >
-        <div
-          ref={ref}
-          onMouseMove={onMouseMove}
-          className="spot panel relative flex h-full min-h-[280px] cursor-pointer flex-col justify-between overflow-hidden rounded-t-xl transition-transform duration-300 hover:-translate-y-1"
-        >
-          <CornerMarks />
-          <img
-            src={image}
-            alt={imageAlt}
-            className="mb-4 h-48 w-full rounded-t-xl border-b border-carnation/20 object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
-          />
-          <div className="flex flex-1 flex-col justify-between px-6 pb-6">
-            <div>
-              <div className="flex items-center justify-between gap-3">
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-carnation">
-                  {fig}
-                </span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-dim">
-                  {tag}
-                </span>
-              </div>
-              <h3 className="mt-3 font-display text-2xl text-ivory">{title}</h3>
-              <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted">{blurb}</p>
-            </div>
-
-            <div className="mt-5">
-              <div className="mb-4 flex flex-wrap gap-2">
-                {tags.map((t) => (
-                  <TagPill key={t}>{t}</TagPill>
-                ))}
-              </div>
-              <VisitCue label="Visit Site" />
-            </div>
-          </div>
-        </div>
-      </a>
-    </Reveal>
+    <div className="pr-media absolute inset-[-8%] flex items-center justify-center bg-[radial-gradient(60%_60%_at_50%_45%,rgba(255,59,78,0.22),transparent_70%)]">
+      <span className="font-sans text-[clamp(5rem,16vw,12rem)] font-extrabold tracking-[-0.04em] text-ivory/90">
+        {mark}
+      </span>
+    </div>
   )
 }
 
-function TagPill({ children }: { children: string }) {
+function StatusBadge({ status }: { status: Project['status'] }) {
+  const live = status === 'Live'
   return (
-    <span className="chip px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.08em] text-dim">
-      {children}
+    <span className="mt-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-dim">
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${live ? 'bg-[var(--wa-green)]' : 'bg-carnation'}`}
+        aria-hidden="true"
+      />
+      {status}
     </span>
   )
 }
 
 function VisitCue({ label }: { label: string }) {
   return (
-    <span className="underline-grow inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.12em] text-ivory transition-colors group-hover:text-carnation">
+    <span className="underline-grow mt-6 inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.12em] text-ivory transition-colors group-hover:text-carnation">
       {label}
       <svg
         width="13"
@@ -218,16 +281,5 @@ function VisitCue({ label }: { label: string }) {
         <path d="M7 17 17 7M9 7h8v8" />
       </svg>
     </span>
-  )
-}
-
-function CornerMarks() {
-  return (
-    <>
-      <span className="corner-mark tl" />
-      <span className="corner-mark tr" />
-      <span className="corner-mark bl" />
-      <span className="corner-mark br" />
-    </>
   )
 }
