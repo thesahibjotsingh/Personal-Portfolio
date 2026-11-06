@@ -35,7 +35,9 @@ export default function Services() {
 
       const total = 3
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: list, start: 'top 78%', end: 'bottom 40%', scrub: 0.5 },
+        /* Starts as the list enters and is fully played by the time its top
+           reaches mid-screen, so every step is lit while you're still reading. */
+        scrollTrigger: { trigger: list, start: 'top 88%', end: 'top 48%', scrub: 0.4 },
       })
       tl.fromTo(
         '.proc-line',
