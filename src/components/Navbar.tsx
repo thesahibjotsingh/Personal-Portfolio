@@ -4,6 +4,7 @@ import { SERVICES, PILLARS, STACK_ITEMS } from '../lib/content'
 import { CONFIG } from '../lib/config'
 import StatusTag from './StatusTag'
 import Roll from './Roll'
+import StackMark from './StackMark'
 
 const NAV_LINKS = [
   { label: 'Work', href: '#work' },
@@ -354,7 +355,7 @@ function DropdownContent({ label }: { label: string }) {
                   href="#stack"
                   className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors hover:bg-ivory/10 focus-visible:bg-ivory/10"
                 >
-                  <img src={t.logo} alt="" className="h-5 w-5 object-contain" />
+                  <StackMark item={t} className="h-5 w-5" />
                   <span className="text-[14px] text-ivory">{t.name}</span>
                 </a>
               </li>

@@ -1,6 +1,7 @@
 import SectionLabel from './SectionLabel'
 import Reveal from './Reveal'
 import { STACK_ITEMS } from '../lib/content'
+import StackMark from './StackMark'
 
 const REVERSED = [...STACK_ITEMS].reverse()
 
@@ -45,7 +46,7 @@ function Group({ items, hidden = false }: { items: Items; hidden?: boolean }) {
     >
       {items.map((item) => (
         <li key={item.name} className="flex items-center gap-4">
-          <img src={item.logo} alt="" className="h-7 w-7 object-contain md:h-9 md:w-9" />
+          <StackMark item={item} className="h-7 w-7 md:h-9 md:w-9" />
           <span className="whitespace-nowrap font-sans text-3xl font-light tracking-tight text-ivory/90 md:text-5xl">
             {item.name}
           </span>

@@ -256,6 +256,10 @@ function Panel({
           <img
             src={project.image}
             alt={project.imageAlt}
+            width={project.imageSize[0]}
+            height={project.imageSize[1]}
+            loading="lazy"
+            decoding="async"
             className={`h-[min(36svh,260px)] w-auto max-w-none shrink-0 rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:block lg:h-[var(--shot-h)] ${
               project.mobileImage ? 'hidden' : ''
             }`}
@@ -264,6 +268,10 @@ function Panel({
             <img
               src={project.mobileImage}
               alt={project.mobileAlt}
+              width={project.mobileSize?.[0]}
+              height={project.mobileSize?.[1]}
+              loading="lazy"
+              decoding="async"
               className="h-auto w-[min(78vw,300px)] shrink-0 rounded-[1.25rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:hidden"
             />
           )}

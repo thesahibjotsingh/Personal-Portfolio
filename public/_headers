@@ -1,0 +1,24 @@
+# Cloudflare Pages response headers (applied to static files).
+#
+# Content-Security-Policy is built from what the site really loads:
+#   scripts    - the bundled app only (plus Cloudflare Web Analytics' beacon, so
+#                turning that on later needs no change here)
+#   styles     - the bundled CSS, inline style attributes, Google Fonts' stylesheet
+#   fonts      - Google Fonts files
+#   images     - own files plus data: URIs (the film-grain overlay)
+#   media      - the statue video
+#   connections- own origin (/api/geo) and EmailJS, which delivers the brief form
+# Anything else is blocked, which also stops injected third-party scripts.
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://api.emailjs.com https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+
+# Hashed build files never change under the same name, so browsers can keep them
+# for a year; returning visitors then download nothing but the HTML.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

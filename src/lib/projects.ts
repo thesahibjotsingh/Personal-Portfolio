@@ -28,9 +28,12 @@ export type Project = {
   cta?: string
   image: string
   imageAlt: string
+  /* intrinsic pixel size, so the browser reserves the right space before the image loads */
+  imageSize: [number, number]
   /* portrait phone screenshot, shown next to the desktop one when present */
   mobileImage?: string
   mobileAlt?: string
+  mobileSize?: [number, number]
 }
 
 export const PROJECTS: Project[] = [
@@ -50,8 +53,10 @@ export const PROJECTS: Project[] = [
     cta: 'View live demo',
     image: demoPreview,
     imageAlt: 'Artisanal POS live demo — menu ordering screen',
+    imageSize: [1910, 877],
     mobileImage: posMobile,
     mobileAlt: 'Artisanal POS on a phone — menu and order bar',
+    mobileSize: [1180, 2000],
   },
   {
     index: '02',
@@ -69,8 +74,10 @@ export const PROJECTS: Project[] = [
     cta: 'Visit site',
     image: crostaPreview,
     imageAlt: 'The Crosta e-commerce storefront',
+    imageSize: [1891, 869],
     mobileImage: crostaMobile,
     mobileAlt: 'The Crosta on a phone — offers and bottom navigation',
+    mobileSize: [1045, 2000],
   },
   {
     index: '03',
@@ -88,8 +95,10 @@ export const PROJECTS: Project[] = [
     cta: 'Visit site',
     image: barkatPreview,
     imageAlt: 'Barkat & Company corporate platform',
+    imageSize: [1897, 874],
     mobileImage: barkatMobile,
     mobileAlt: 'Barkat & Company on a phone — hero and calls to action',
+    mobileSize: [1160, 2000],
   },
   {
     index: '04',
@@ -105,8 +114,10 @@ export const PROJECTS: Project[] = [
     tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Accessibility'],
     image: limsPreview,
     imageAlt: 'LIMS hospital home page — find a doctor or department',
+    imageSize: [1898, 872],
     mobileImage: limsMobile,
     mobileAlt: 'LIMS hospital on a phone — search, quick actions and specialities',
+    mobileSize: [1061, 2000],
   },
   {
     index: '05',
@@ -122,8 +133,10 @@ export const PROJECTS: Project[] = [
     tags: ['Next.js', 'TypeScript', 'Firestore', 'Cloudflare'],
     image: quickbillPreview,
     imageAlt: 'QuickBill home screen — quotations, parties and items',
+    imageSize: [1895, 873],
     mobileImage: quickbillMobile,
     mobileAlt: 'QuickBill on a phone — quotation shortcuts and recent quotations',
+    mobileSize: [1037, 2000],
   },
   {
     index: '06',
@@ -139,5 +152,6 @@ export const PROJECTS: Project[] = [
     tags: ['Python', 'Desktop App', 'PDF Engine', 'Local-first'],
     image: pdfstudioPreview,
     imageAlt: 'PDFStudio home screen — 48 PDF tools',
+    imageSize: [1920, 1000],
   },
 ]

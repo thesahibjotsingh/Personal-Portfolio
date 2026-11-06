@@ -4,7 +4,6 @@ import javascriptLogo from '../assets/javascript.webp'
 import html5Logo from '../assets/HTML5.webp'
 import css3Logo from '../assets/CSS3_logo.webp'
 import pwaLogo from '../assets/pwa.webp'
-import emailjsLogo from '../assets/EmailJs.webp'
 import cloudflareLogo from '../assets/Cloudflare.webp'
 
 export const SERVICES = [
@@ -43,13 +42,21 @@ export const PILLARS = [
 /* Every entry is traceable to something actually shipped or in progress:
    Firebase/Firestore/PWA on the Cloud POS and QuickBill, HTML5/CSS3/JS on
    Crosta and Barkat, EmailJS on this page's contact form, Cloudflare hosting. */
-export const STACK_ITEMS = [
+/* What the work is actually built with: every entry appears in a project card
+   above. Items with a logo file show it; the rest get a monogram. */
+export type StackItem = { name: string; logo?: string; mark?: string }
+
+export const STACK_ITEMS: StackItem[] = [
+  { name: 'Next.js', mark: 'N' },
+  { name: 'React', mark: 'Re' },
+  { name: 'TypeScript', mark: 'TS' },
+  { name: 'Tailwind CSS', mark: 'Tw' },
   { name: 'Firebase', logo: firebaseLogo },
   { name: 'Firestore', logo: firestoreLogo },
+  { name: 'Python', mark: 'Py' },
   { name: 'JavaScript', logo: javascriptLogo },
   { name: 'HTML5', logo: html5Logo },
   { name: 'CSS3', logo: css3Logo },
   { name: 'PWA', logo: pwaLogo },
-  { name: 'EmailJS', logo: emailjsLogo },
   { name: 'Cloudflare', logo: cloudflareLogo },
 ]
