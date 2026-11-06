@@ -44,7 +44,7 @@ export const PROJECTS: Project[] = [
     tint: '#3b1f0d',
     fig: 'Fig. 01 — Cloud POS',
     title: 'Custom Cloud-Hosted POS System',
-    meta: 'Own product',
+    meta: 'Own product · runs The Crosta',
     status: 'Live',
     blurb: 'A register that syncs across every terminal in real time.',
     tags: ['Firebase', 'Firestore', 'JavaScript', 'Real-time Sync', 'PWA'],

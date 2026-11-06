@@ -1,15 +1,19 @@
-import { useEffect, useLayoutEffect, useRef, type CSSProperties, type RefObject } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from 'react'
 import Reveal from './Reveal'
 import Roll from './Roll'
 import CharSwap from './CharSwap'
 import SectionLabel from './SectionLabel'
 import StatusTag from './StatusTag'
+import Lightbox, { type ViewerItem } from './Lightbox'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 import { CONFIG } from '../lib/config'
 import { PROJECTS, type Project } from '../lib/projects'
 
 export default function Work() {
   const stack = useRef<HTMLDivElement>(null)
+  const [viewer, setViewer] = useState<ViewerItem | null>(null)
+  const openViewer = useCallback((item: ViewerItem) => setViewer(item), [])
+  const closeViewer = useCallback(() => setViewer(null), [])
 
   /* Every panel is sticky, on phones as well as desktop, so the next one slides
      up over the last. As that happens the covered panel shrinks and dims (a
@@ -78,9 +82,17 @@ export default function Work() {
 
       <div ref={stack} className="relative">
         {PROJECTS.map((project) => (
-          <Panel key={project.slug} project={project} total={PROJECTS.length} first={project.index === '01'} />
+          <Panel
+            key={project.slug}
+            project={project}
+            total={PROJECTS.length}
+            first={project.index === '01'}
+            onOpen={openViewer}
+          />
         ))}
       </div>
+
+      <Lightbox item={viewer} onClose={closeViewer} />
     </section>
   )
 }
@@ -175,23 +187,36 @@ function Panel({
   project,
   total,
   first,
+  onOpen,
 }: {
   project: Project
   total: number
   first: boolean
+  onOpen: (item: ViewerItem) => void
 }) {
   const linkProps = project.href
     ? {
         href: project.href,
         target: '_blank',
         rel: 'noopener noreferrer',
-        'aria-label': `${project.cta} — ${project.title} (opens in a new tab)`,
         'data-cursor': 'View project →',
       }
     : {}
-  const Wrapper = (project.href ? 'a' : 'div') as 'a'
   const shot = useRef<HTMLDivElement>(null)
   useAutoPan(shot, !project.mobileImage)
+
+  const titleWords = (
+    <>
+      {project.short.split(' ').map((word, i) => (
+        <span key={i} className="mr-[0.2em] inline-block overflow-hidden align-bottom">
+          <span className="pt-word inline-block">
+            <CharSwap text={word} tracking={-0.045} />
+          </span>
+        </span>
+      ))}
+      {project.href && <span className="sr-only"> (opens in a new tab)</span>}
+    </>
+  )
 
   return (
     <>
@@ -213,8 +238,7 @@ function Panel({
         }radial-gradient(120% 90% at 50% 0%, ${project.tint}, var(--color-void) 72%)`,
       }}
     >
-      <Wrapper
-        {...linkProps}
+      <div
         className="panel-inner relative flex h-full origin-top flex-col gap-4 px-6 pb-[4.5rem] pt-[calc(var(--nav-h,74px)+0.5rem)] md:px-10 md:pb-8 lg:gap-6 lg:pb-0"
       >
         <div className="flex w-full items-center justify-between gap-4">
@@ -251,27 +275,58 @@ function Panel({
           {/* Each device gets its own screenshot: the desktop one from 1024px up,
               the phone one below that. Both keep their own proportions — nothing
               is cropped or stretched. */}
-          <img
-            src={project.image}
-            alt={project.imageAlt}
-            width={project.imageSize[0]}
-            height={project.imageSize[1]}
-            loading="lazy"
-            decoding="async"
-            className={`h-[min(34svh,290px)] w-auto max-w-none shrink-0 rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:block lg:h-[var(--shot-h)] ${
-              project.mobileImage ? 'hidden' : ''
-            }`}
-          />
-          {project.mobileImage && (
+          <button
+            type="button"
+            onClick={() =>
+              onOpen({
+                src: project.image,
+                alt: project.imageAlt,
+                width: project.imageSize[0],
+                height: project.imageSize[1],
+                title: project.title,
+                wide: true,
+              })
+            }
+            aria-label={`Enlarge screenshot: ${project.title}`}
+            data-cursor="Enlarge"
+            className={`press shrink-0 cursor-zoom-in rounded-t-xl lg:block ${project.mobileImage ? 'hidden' : ''}`}
+          >
             <img
-              src={project.mobileImage}
-              alt={project.mobileAlt}
-              width={project.mobileSize?.[0]}
-              height={project.mobileSize?.[1]}
+              src={project.image}
+              alt={project.imageAlt}
+              width={project.imageSize[0]}
+              height={project.imageSize[1]}
               loading="lazy"
               decoding="async"
-              className="h-full max-h-[540px] w-auto max-w-full shrink-0 rounded-[1.25rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:hidden"
+              className="block h-[min(34svh,290px)] w-auto max-w-none rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:h-[var(--shot-h)]"
             />
+          </button>
+          {project.mobileImage && (
+            <button
+              type="button"
+              onClick={() =>
+                onOpen({
+                  src: project.mobileImage!,
+                  alt: project.mobileAlt ?? project.imageAlt,
+                  width: project.mobileSize?.[0] ?? 0,
+                  height: project.mobileSize?.[1] ?? 0,
+                  title: project.title,
+                  wide: false,
+                })
+              }
+              aria-label={`Enlarge phone screenshot: ${project.title}`}
+              className="press h-full max-h-[540px] max-w-full shrink-0 cursor-zoom-in rounded-[1.25rem] lg:hidden"
+            >
+              <img
+                src={project.mobileImage}
+                alt={project.mobileAlt}
+                width={project.mobileSize?.[0]}
+                height={project.mobileSize?.[1]}
+                loading="lazy"
+                decoding="async"
+                className="block h-full w-auto max-w-full rounded-[1.25rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]"
+              />
+            </button>
           )}
         </div>
         {!project.mobileImage && (
@@ -289,13 +344,7 @@ function Panel({
         <div className="flex flex-col gap-3 lg:gap-6 lg:absolute lg:inset-x-10 lg:bottom-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
           <div className="lg:max-w-[62%]">
             <h3 className="m-0 font-sans text-[clamp(2rem,8.5vw,3rem)] lg:text-[clamp(3rem,8vw,8.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory">
-              {project.short.split(' ').map((word, i) => (
-                <span key={i} className="mr-[0.2em] inline-block overflow-hidden align-bottom">
-                  <span className="pt-word inline-block">
-                    <CharSwap text={word} tracking={-0.045} />
-                  </span>
-                </span>
-              ))}
+              {project.href ? <a {...linkProps}>{titleWords}</a> : titleWords}
             </h3>
             {project.title !== project.short && (
               <p className="mt-3 hidden text-[15px] text-muted sm:block">{project.title}</p>
@@ -317,7 +366,7 @@ function Panel({
               ))}
             </div>
             {project.href ? (
-              <Cue label={project.cta ?? 'Visit'} />
+              <Cue label={project.cta ?? 'Visit'} href={project.href} />
             ) : (
               <a
                 href={`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(
@@ -333,7 +382,7 @@ function Panel({
             )}
           </div>
         </div>
-      </Wrapper>
+      </div>
 
       {/* darkens as the next panel slides over this one */}
       <div className="panel-dim pointer-events-none absolute inset-0 bg-black opacity-0" />
@@ -342,9 +391,19 @@ function Panel({
   )
 }
 
-function Cue({ label }: { label: string }) {
+function Cue({ label, href }: { label: string; href: string }) {
+  /* a second way into the same link for mouse and touch; the title above is the
+     one keyboard and screen-reader users get, so this one is skipped for them */
   return (
-    <span className="mt-3 inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[11px] lg:mt-5 uppercase tracking-[0.12em] text-ivory transition-colors group-hover:text-carnation">
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-cursor="View project →"
+      tabIndex={-1}
+      aria-hidden="true"
+      className="mt-3 inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[11px] lg:mt-5 uppercase tracking-[0.12em] text-ivory transition-colors group-hover:text-carnation"
+    >
       <Roll>{label}</Roll>
       <svg
         width="13"
@@ -359,6 +418,6 @@ function Cue({ label }: { label: string }) {
       >
         <path d="M7 17 17 7M9 7h8v8" />
       </svg>
-    </span>
+    </a>
   )
 }
