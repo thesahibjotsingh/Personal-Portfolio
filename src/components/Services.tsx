@@ -104,7 +104,7 @@ export default function Services() {
   }, [])
 
   return (
-    <section ref={section} id="services" className="px-6 py-14 md:px-10 md:py-24">
+    <section ref={section} id="services" className="px-6 pb-14 pt-4 md:px-10 md:py-24">
       <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>Services</SectionLabel>
 

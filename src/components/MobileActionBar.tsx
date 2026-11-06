@@ -45,7 +45,7 @@ export default function MobileActionBar() {
 
   return (
     <div
-      className={`fixed inset-x-4 z-[55] flex gap-2 rounded-full border border-white/10 bg-black/75 p-1 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all duration-300 md:hidden ${
+      className={`fixed inset-x-4 z-[55] flex gap-2.5 transition-all duration-300 md:hidden ${
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-8 opacity-0'
       }`}
       style={{ bottom: 'max(0.625rem, env(safe-area-inset-bottom))' }}
@@ -56,16 +56,16 @@ export default function MobileActionBar() {
         target="_blank"
         rel="noopener noreferrer"
         tabIndex={visible ? 0 : -1}
-        className="flex flex-1 items-center justify-center gap-2 rounded-full border border-[var(--wa-green)]/50 px-3 py-2 text-[13px] font-medium text-[#f4f1ea]"
+        className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[var(--wa-green)] px-3 py-3 text-[14px] font-semibold text-[#06210f] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.85)]"
       >
-        <Icon name="whatsapp" className="h-[1.05em] w-[1.05em] text-[var(--wa-green)]" />
+        <Icon name="whatsapp" className="h-[1.1em] w-[1.1em]" />
         WhatsApp
         <span className="sr-only"> (opens in a new tab)</span>
       </a>
       <a
         href="#contact"
         tabIndex={visible ? 0 : -1}
-        className="flex flex-[1.4] items-center justify-center rounded-full bg-carnation px-3 py-2 text-[13px] font-medium text-[#0a0909]"
+        className="flex flex-[1.4] items-center justify-center rounded-full bg-carnation px-3 py-3 text-[14px] font-semibold text-[#0a0909] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.85)]"
       >
         Start your brief
       </a>
