@@ -148,37 +148,42 @@ function Panel({
             height are both capped and the image keeps its own proportions, so
             nothing is cropped; it is never drawn larger than its own pixels. */}
         <div
-          className="panel-shot flex items-start justify-start gap-4 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] lg:justify-center lg:gap-6 lg:overflow-visible [&::-webkit-scrollbar]:hidden"
+          className={`panel-shot flex items-start gap-4 [-ms-overflow-style:none] [scrollbar-width:none] lg:justify-center lg:overflow-visible [&::-webkit-scrollbar]:hidden ${
+            /* phones with a mobile screenshot: just show it, centred. Without
+               one, fall back to the desktop shot as a swipeable strip. */
+            project.mobileImage ? 'justify-center' : 'justify-start overflow-x-auto'
+          }`}
           style={
             {
-              /* One height drives both screenshots on desktop, so the pair is
-                 sized to fit the width (desktop shot ≈ 2.17 : 1, phone shot
-                 ≈ 0.55 : 1) and the height available, whichever is tighter. */
-              '--shot-h': project.mobileImage
-                ? 'min(calc(100svh - 12rem), calc(88vw / 2.8))'
-                : 'min(calc(100svh - 12rem), calc(min(1200px, 88vw) / 2.17))',
+              /* desktop height: whichever is tighter — the room on screen, or the
+                 width cap (a desktop shot is about 2.17 : 1) */
+              '--shot-h': 'min(calc(100svh - 12rem), calc(min(1200px, 88vw) / 2.17))',
             } as CSSProperties
           }
         >
-          {/* Phones: each screenshot keeps its proportions at a readable height,
-              so the row is wider than the screen and swipes sideways — nothing
-              is cropped or shrunk to a thumbnail. */}
+          {/* Each device gets its own screenshot: the desktop one from 1024px up,
+              the phone one below that. Both keep their own proportions — nothing
+              is cropped or stretched. */}
           <img
             src={project.image}
             alt={project.imageAlt}
-            className="h-[min(36svh,260px)] w-auto max-w-none shrink-0 rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:h-[var(--shot-h)]"
+            className={`h-[min(36svh,260px)] w-auto max-w-none shrink-0 rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:block lg:h-[var(--shot-h)] ${
+              project.mobileImage ? 'hidden' : ''
+            }`}
           />
           {project.mobileImage && (
             <img
               src={project.mobileImage}
               alt={project.mobileAlt}
-              className="h-[min(36svh,260px)] w-auto max-w-none shrink-0 rounded-[1.1rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:h-[calc(var(--shot-h)*0.86)]"
+              className="h-auto w-[min(78vw,300px)] shrink-0 rounded-[1.25rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:hidden"
             />
           )}
         </div>
-        <p className="-mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-dim lg:hidden">
-          {project.mobileImage ? 'Swipe — desktop, then mobile →' : 'Swipe to see the full screen →'}
-        </p>
+        {!project.mobileImage && (
+          <p className="-mt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-dim lg:hidden">
+            Swipe to see the full screen →
+          </p>
+        )}
 
         {/* fades the lower edge of the screenshot into the panel so the title reads */}
         <div
