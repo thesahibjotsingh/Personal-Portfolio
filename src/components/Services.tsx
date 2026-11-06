@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from 'react'
 import Reveal from './Reveal'
 import SectionLabel from './SectionLabel'
 import { SERVICES } from '../lib/content'
+import { PRICING, inr } from '../lib/config'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 
 /* Copy here describes the kinds of work already shown in the Work section —
@@ -11,6 +12,30 @@ const PROCESS = [
   { step: 'Design', body: 'Layout and flows agreed on screen before anything is built.' },
   { step: 'Build', body: 'Working software you can click through, not a slide deck about it.' },
   { step: 'Launch', body: 'Deployed, checked on real devices, and walked through with you.' },
+]
+
+/* "From" figures only — see PRICING in lib/config.ts. Websites are charged by
+   the page; the other two are scoped per project. */
+const PRICES = [
+  {
+    label: 'Websites',
+    price: inr(PRICING.perPage),
+    unit: 'per page',
+    note: 'Charged by the number of pages, so you pay for exactly what the site needs. A 6-page brand site starts around ' +
+      inr(6 * PRICING.perPage) + '.',
+  },
+  {
+    label: 'Online stores',
+    price: inr(PRICING.store),
+    unit: '',
+    note: 'Product pages, cart and payments, scoped by the size of the catalogue and the payment options.',
+  },
+  {
+    label: 'Custom software',
+    price: inr(PRICING.software),
+    unit: '',
+    note: 'POS, billing, hospital portals and desktop tools, quoted per project after a short call.',
+  },
 ]
 
 export default function Services() {
@@ -163,6 +188,32 @@ export default function Services() {
               </li>
             ))}
           </ol>
+
+          <Reveal>
+            <h3 className="mb-8 mt-20 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
+              How it's priced
+            </h3>
+          </Reveal>
+          <div className="grid gap-0 md:grid-cols-3">
+            {PRICES.map((p, i) => (
+              <Reveal key={p.label} delay={i * 80}>
+                <div className="h-full border-t border-hairline py-6 pr-8">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-carnation">
+                    {p.label}
+                  </p>
+                  <p className="mt-3 font-display text-3xl text-ivory md:text-4xl">
+                    from {p.price}
+                    {p.unit && <span className="ml-2 text-base text-muted">{p.unit}</span>}
+                  </p>
+                  <p className="mt-3 text-[14.5px] leading-relaxed text-muted">{p.note}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <p className="mt-2 text-[12.5px] leading-relaxed text-dim">
+            Starting points, not quotes. The final price depends on the pages, the features and the
+            timeline.
+          </p>
         </div>
       </div>
     </section>

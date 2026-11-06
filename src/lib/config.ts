@@ -28,11 +28,15 @@ export const EMAILJS = {
   toEmail: 'in.sahibjotsingh@gmail.com',
 } as const
 
-export const PROJECT_TYPES = [
-  'New POS system',
-  'E-commerce platform',
-  'Corporate website',
-  'Institution / hospital website',
-  'Billing or desktop software',
-  'Something else',
-] as const
+/* Starting points in rupees, set from typical Indian freelance market rates and
+   shown as "from" figures, never as quotes. Websites are charged by the page.
+   Change a number here and the Services section, the brief builder's hint and
+   the contact copy all follow. */
+export const PRICING = {
+  perPage: 4000,
+  store: 60000,
+  software: 150000,
+} as const
+
+/* ₹1,50,000 style — Indian digit grouping */
+export const inr = (amount: number) => `₹${amount.toLocaleString('en-IN')}`

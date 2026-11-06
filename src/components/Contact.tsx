@@ -1,65 +1,16 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
-import emailjs from '@emailjs/browser'
+import { useEffect, useRef, useState } from 'react'
 import Reveal from './Reveal'
-import Roll from './Roll'
 import StretchHeading from './StretchHeading'
 import SectionLabel from './SectionLabel'
+import BriefBuilder from './BriefBuilder'
 import Icon, { type IconName } from './Icon'
-import { CONFIG, EMAILJS, PROJECT_TYPES } from '../lib/config'
-
-const DEFAULTS = {
-  name: '',
-  email: '',
-  type: PROJECT_TYPES[0] as string,
-  message: '',
-}
+import { CONFIG, PRICING, inr } from '../lib/config'
 
 type Toast = { type: 'success' | 'error'; text: string } | null
-type Field = 'name' | 'email' | 'message'
-type Errors = Partial<Record<Field, string>>
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
-
-function validate(v: typeof DEFAULTS): Errors {
-  const errors: Errors = {}
-  if (!v.name.trim()) errors.name = 'Tell me your name.'
-  if (!v.email.trim()) errors.email = 'Add an email so I can reply.'
-  else if (!EMAIL_RE.test(v.email.trim())) errors.email = "That email doesn't look right."
-  if (v.message.trim().length < 10) errors.message = 'A sentence or two about the project helps.'
-  return errors
-}
-
-function FieldError({ id, text }: { id: string; text?: string }) {
-  if (!text) return null
-  return (
-    <p id={id} role="alert" className="mt-1.5 text-[12px] text-[var(--err)]">
-      {text}
-    </p>
-  )
-}
-
-const LABEL_CLASSES =
-  'mb-2 block font-mono text-[10px] uppercase tracking-[0.12em] text-dim'
-const FIELD_CLASSES = 'w-full px-3.5 py-3 text-[14px]'
 
 export default function Contact() {
-  const [sending, setSending] = useState(false)
   const [toast, setToast] = useState<Toast>(null)
-  const [values, setValues] = useState(DEFAULTS)
-  const [errors, setErrors] = useState<Errors>({})
-  /* Hidden field real visitors never see; bots that fill every input do. */
-  const [trap, setTrap] = useState('')
   const toastTimer = useRef<number | undefined>(undefined)
-
-  const setField = (key: keyof typeof DEFAULTS, value: string) => {
-    setValues((prev) => ({ ...prev, [key]: value }))
-    setErrors((prev) => {
-      if (!(key in prev)) return prev
-      const next = { ...prev }
-      delete next[key as Field]
-      return next
-    })
-  }
 
   useEffect(() => () => window.clearTimeout(toastTimer.current), [])
 
@@ -67,52 +18,6 @@ export default function Contact() {
     window.clearTimeout(toastTimer.current)
     setToast({ type, text })
     toastTimer.current = window.setTimeout(() => setToast(null), 5000)
-  }
-
-  const submit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (sending) return
-
-    /* a filled trap is a bot: pretend it worked and send nothing */
-    if (trap) {
-      showToast('success', 'Message sent. Thanks for reaching out.')
-      return
-    }
-
-    const found = validate(values)
-    setErrors(found)
-    const firstBad = (['name', 'email', 'message'] as const).find((k) => found[k])
-    if (firstBad) {
-      document.getElementById(`contact-${firstBad}`)?.focus()
-      return
-    }
-
-    setSending(true)
-    try {
-      await emailjs.send(
-        EMAILJS.serviceId,
-        EMAILJS.templateId,
-        {
-          name: values.name,
-          email: values.email,
-          /* project_type is also folded into the message body: the existing
-             EmailJS template doesn't reference it yet, and the classification
-             is the whole point of the field. */
-          project_type: values.type,
-          message: `Project type: ${values.type}\n\n${values.message}`,
-          title: 'Portfolio Inquiry',
-          time: new Date().toLocaleString(),
-          to_email: EMAILJS.toEmail,
-        },
-        EMAILJS.publicKey,
-      )
-      showToast('success', 'Message sent. Thanks for reaching out.')
-      setValues(DEFAULTS)
-    } catch {
-      showToast('error', "Couldn't send your message. Try again, or email me directly.")
-    } finally {
-      setSending(false)
-    }
   }
 
   return (
@@ -136,14 +41,19 @@ export default function Contact() {
                   <span className="italic text-carnation-deep">building</span>.
                 </h2>
                 <p className="mt-4 text-[14px] leading-relaxed text-muted">
-                  A 20-minute call to scope the platform, the timeline, and whether I'm
-                  the right builder for it. No pitch deck, no pressure.
+                  Five quick questions and I'll know enough to scope it, so the first reply is
+                  useful rather than a list of questions. No pitch deck, no pressure.
+                </p>
+                <p className="mt-4 border-l border-carnation/60 pl-4 text-[13px] leading-relaxed text-muted">
+                  Websites are charged by the page — from about {inr(PRICING.perPage)} a page.
+                  Stores start around {inr(PRICING.store)}; custom software around{' '}
+                  {inr(PRICING.software)}.
                 </p>
               </div>
 
               <div className="mt-8">
                 <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.14em] text-dim">
-                  Quick Links
+                  Prefer to talk? Quick links
                 </div>
                 <div className="flex items-center gap-3">
                   <QuickLink href={`mailto:${CONFIG.email}`} label="Email" icon="mail" />
@@ -169,109 +79,7 @@ export default function Contact() {
           <Reveal className="md:col-span-3" delay={100}>
             <div className="panel relative h-full p-6 md:p-8">
               <CornerMarks />
-              <form onSubmit={submit} noValidate className="space-y-5">
-                <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-                  <label htmlFor="contact-website">Leave this field empty</label>
-                  <input
-                    id="contact-website"
-                    type="text"
-                    tabIndex={-1}
-                    autoComplete="off"
-                    value={trap}
-                    onChange={(e) => setTrap(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={LABEL_CLASSES} htmlFor="contact-name">
-                      Name
-                    </label>
-                    <input
-                      id="contact-name"
-                      type="text"
-                      required
-                      autoComplete="name"
-                      aria-invalid={errors.name ? true : undefined}
-                      aria-describedby={errors.name ? 'contact-name-error' : undefined}
-                      value={values.name}
-                      onChange={(e) => setField('name', e.target.value)}
-                      placeholder="Neha Parmar"
-                      className={FIELD_CLASSES}
-                    />
-                    <FieldError id="contact-name-error" text={errors.name} />
-                  </div>
-                  <div>
-                    <label className={LABEL_CLASSES} htmlFor="contact-email">
-                      Email
-                    </label>
-                    <input
-                      id="contact-email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      aria-invalid={errors.email ? true : undefined}
-                      aria-describedby={errors.email ? 'contact-email-error' : undefined}
-                      value={values.email}
-                      onChange={(e) => setField('email', e.target.value)}
-                      placeholder="neha@company.com"
-                      className={FIELD_CLASSES}
-                    />
-                    <FieldError id="contact-email-error" text={errors.email} />
-                  </div>
-                </div>
-
-                <div>
-                  <label className={LABEL_CLASSES} htmlFor="contact-type">
-                    Project Type
-                  </label>
-                  <select
-                    id="contact-type"
-                    value={values.type}
-                    onChange={(e) => setField('type', e.target.value)}
-                    className={FIELD_CLASSES}
-                  >
-                    {PROJECT_TYPES.map((type) => (
-                      <option key={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className={LABEL_CLASSES} htmlFor="contact-message">
-                    Project Details
-                  </label>
-                  <textarea
-                    id="contact-message"
-                    required
-                    rows={4}
-                    aria-invalid={errors.message ? true : undefined}
-                    aria-describedby={errors.message ? 'contact-message-error' : undefined}
-                    value={values.message}
-                    onChange={(e) => setField('message', e.target.value)}
-                    placeholder="What are you building, and what does it need to do on day one?"
-                    className={`${FIELD_CLASSES} resize-none`}
-                  />
-                  <FieldError id="contact-message-error" text={errors.message} />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={sending}
-                  className="btn-primary inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[12px] uppercase tracking-[0.12em] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {sending ? (
-                    <>
-                      <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-carnation/25 border-t-carnation" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Roll>Send Inquiry</Roll>
-                      <Icon name="arrow" className="h-3.5 w-3.5" />
-                    </>
-                  )}
-                </button>
-              </form>
+              <BriefBuilder onResult={showToast} />
             </div>
           </Reveal>
         </div>

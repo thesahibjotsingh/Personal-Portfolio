@@ -10,6 +10,7 @@ import SmoothScroll from './components/SmoothScroll'
 import Cursor from './components/Cursor'
 import ScrollProgress from './components/ScrollProgress'
 import ThemeSwitch from './components/ThemeSwitch'
+import MobileActionBar from './components/MobileActionBar'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Contact />
       </main>
       <Footer />
+      <MobileActionBar />
     </>
   )
 }
