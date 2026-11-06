@@ -35,8 +35,14 @@ export default function About() {
   }, [])
 
   return (
-    <section id="about" className="px-6 py-16 md:px-10 md:py-28">
-      <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
+    <section id="about" className="relative overflow-hidden px-6 py-16 md:px-10 md:py-32">
+      {/* a faint warm glow off the left edge, so the section has depth */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-1/4 top-1/2 h-[70vmin] w-[70vmin] -translate-y-1/2 rounded-full opacity-[0.14] blur-3xl"
+        style={{ background: 'radial-gradient(closest-side, var(--color-carnation), transparent)' }}
+      />
+      <div className="relative mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>About</SectionLabel>
 
         <p

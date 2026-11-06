@@ -166,17 +166,17 @@ export default function Navbar() {
             className="flex flex-col items-center gap-[5px] min-[900px]:hidden"
           >
             <span
-              className={`h-[2px] w-6 bg-ivory transition-all duration-300 ${
+              className={`h-[2px] w-6 bg-ivory transition-[transform,opacity] duration-300 ease-out ${
                 menuOpen ? 'translate-y-[7px] rotate-45' : ''
               }`}
             />
             <span
-              className={`h-[2px] w-6 bg-ivory transition-all duration-300 ${
+              className={`h-[2px] w-6 bg-ivory transition-[transform,opacity] duration-300 ease-out ${
                 menuOpen ? 'opacity-0' : 'opacity-100'
               }`}
             />
             <span
-              className={`h-[2px] w-6 bg-ivory transition-all duration-300 ${
+              className={`h-[2px] w-6 bg-ivory transition-[transform,opacity] duration-300 ease-out ${
                 menuOpen ? '-translate-y-[7px] -rotate-45' : ''
               }`}
             />
