@@ -35,7 +35,7 @@ export default function About() {
   }, [])
 
   return (
-    <section id="about" className="relative overflow-hidden px-6 py-16 md:px-10 md:py-32">
+    <section id="about" className="relative overflow-hidden px-6 py-12 md:px-10 md:py-20">
       {/* a faint warm glow off the left edge, so the section has depth */}
       <div
         aria-hidden="true"

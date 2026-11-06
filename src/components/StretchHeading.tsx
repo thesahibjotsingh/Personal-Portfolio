@@ -42,7 +42,7 @@ export default function StretchHeading({ text }: { text: string }) {
   return (
     <h2
       ref={el}
-      className="mb-14 select-none whitespace-nowrap text-center font-sans text-[clamp(3rem,13vw,13rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.02em] text-ivory md:mb-20"
+      className="mb-8 select-none whitespace-nowrap text-center font-sans text-[clamp(3rem,13vw,13rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.02em] text-ivory md:mb-12"
     >
       <span className="sr-only">{text}</span>
       <span aria-hidden="true">

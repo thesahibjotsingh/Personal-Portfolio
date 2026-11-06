@@ -23,7 +23,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="border-t border-hairline bg-void px-6 py-14 text-ivory md:px-8 md:py-24"
+      className="border-t border-hairline bg-void px-6 py-12 text-ivory md:px-8 md:pb-20 md:pt-16"
     >
       <StretchHeading text="Let's build" />
 

@@ -115,13 +115,13 @@ export default function Services() {
   }, [])
 
   return (
-    <section ref={section} id="services" className="px-6 pb-14 pt-4 md:px-10 md:py-24">
+    <section ref={section} id="services" className="px-6 pb-12 pt-4 md:px-10 md:pb-20 md:pt-14">
       <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>Services</SectionLabel>
 
         <div>
           <Reveal>
-            <div className="mb-10 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 md:mb-14">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 md:mb-8">
               <h2 className="font-display text-4xl font-normal text-ivory md:text-6xl">
                 What I <span className="italic text-carnation-deep">build</span>.
               </h2>
@@ -134,7 +134,7 @@ export default function Services() {
               const price = priceFor(s.price, region)
               const title = 'font-sans text-[clamp(2rem,5.6vw,4.75rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.04em]'
               return (
-                <li key={s.title} className="svc-row group relative py-8 md:py-12">
+                <li key={s.title} className="svc-row group relative py-6 md:py-9">
                   {/* the rule: a faint track, with a red line that draws over it */}
                   <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-hairline" />
                   <span
@@ -181,7 +181,7 @@ export default function Services() {
           </p>
 
           <Reveal>
-            <h3 className="mb-8 mt-20 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
+            <h3 className="mb-6 mt-14 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
               How a project runs
             </h3>
           </Reveal>

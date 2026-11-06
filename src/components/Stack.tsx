@@ -9,7 +9,7 @@ type Items = typeof STACK_ITEMS
 
 export default function Stack() {
   return (
-    <section id="stack" className="overflow-hidden py-16 md:py-24">
+    <section id="stack" className="overflow-hidden py-12 md:py-16">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-6 md:px-8 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
         <SectionLabel>The Toolbench</SectionLabel>
         <Reveal>
@@ -19,7 +19,7 @@ export default function Stack() {
         </Reveal>
       </div>
 
-      <div className="mt-12 flex flex-col gap-6 md:mt-16 md:gap-8">
+      <div className="mt-8 flex flex-col gap-6 md:mt-10 md:gap-8">
         <Row items={STACK_ITEMS} />
         <Row items={REVERSED} reverse />
       </div>

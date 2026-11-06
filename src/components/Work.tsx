@@ -57,13 +57,13 @@ export default function Work() {
   }, [])
 
   return (
-    <section id="work" className="pt-14 md:pt-24">
+    <section id="work" className="pt-12 md:pt-20">
       <div className="px-6 md:px-10">
         <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 lg:grid-cols-[2.5rem_1fr] lg:gap-10">
           <SectionLabel>Selected Work</SectionLabel>
 
           <Reveal>
-            <div className="mb-6 flex flex-wrap items-end justify-between gap-4 md:mb-20">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4 md:mb-12">
               <h2 className="font-display text-4xl font-normal text-ivory md:text-6xl">
                 Built end to end,{' '}
                 <span className="italic text-carnation-deep">in the open</span>.
