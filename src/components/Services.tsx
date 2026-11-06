@@ -132,9 +132,9 @@ export default function Services() {
           <ul className="m-0 list-none p-0">
             {SERVICES.map((s) => {
               const price = priceFor(s.price, region)
-              const title = 'font-sans text-[clamp(2rem,5.6vw,4.75rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.04em]'
+              const title = 'font-sans text-[clamp(1.6rem,3.1vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]'
               return (
-                <li key={s.title} className="svc-row group relative py-6 md:py-9">
+                <li key={s.title} className="svc-row group relative py-6 md:py-8">
                   {/* the rule: a faint track, with a red line that draws over it */}
                   <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-hairline" />
                   <span
@@ -143,13 +143,13 @@ export default function Services() {
                     style={{ transform: 'scaleX(0)' }}
                   />
 
-                  <div className="grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-10">
+                  <div className="grid gap-6 lg:grid-cols-12 lg:items-center lg:gap-10">
                     <div className="lg:col-span-8">
                       <span className="svc-fade font-mono text-[11px] tracking-[0.2em] text-carnation">
                         {s.index} / 0{SERVICES.length}
                       </span>
                       {/* outlined title; an identical solid copy is revealed over it as you scroll */}
-                      <h3 className="relative m-0 mt-3 transition-transform duration-500 ease-out group-hover:translate-x-2 md:mt-4">
+                      <h3 className="relative m-0 mt-2 transition-transform duration-500 ease-out group-hover:translate-x-2 md:mt-3">
                         <span className={`${title} block text-transparent [-webkit-text-stroke:1px_rgba(244,241,234,0.4)]`}>
                           {s.title}
                         </span>
@@ -165,7 +165,7 @@ export default function Services() {
 
                     <div className="svc-fade lg:col-span-4 lg:text-right">
                       <p className="max-w-sm text-[15px] leading-relaxed text-muted lg:ml-auto">{s.line}</p>
-                      <p className="mt-4 font-display text-3xl text-ivory transition-colors group-hover:text-carnation md:text-4xl">
+                      <p className="mt-3 font-display text-2xl text-ivory transition-colors group-hover:text-carnation md:text-3xl">
                         {price.value ? `from ${price.value}` : 'By quote'}
                         {price.unit && <span className="ml-2 font-sans text-sm text-muted">{price.unit}</span>}
                       </p>
