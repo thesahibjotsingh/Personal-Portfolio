@@ -87,32 +87,26 @@ export default function Services() {
       })
     })
 
-    /* The three services are cards that stack, like the project panels: each
-       sticks near the top, the next slides up over it, and the covered one
-       shrinks and dims. Titles rise out of a mask as a card arrives. */
+    /* Each service is a line in an index. As a row crosses the screen its rule
+       draws across, and its outlined title fills in left to right, scrubbed to
+       the scroll, so the headline "prints" as you read down. The detail and
+       price ease in alongside. */
     mm.add('(min-width: 0px)', () => {
-      const cards = gsap.utils.toArray<HTMLElement>('.svc-card', root)
-      cards.forEach((card, i) => {
-        const next = cards[i + 1]
-        if (next) {
-          const trigger = { trigger: next, start: 'top bottom', end: 'top 30%', scrub: true }
-          gsap.to(card.querySelector('.svc-inner'), { scale: 0.94, ease: 'none', scrollTrigger: trigger })
-          gsap.to(card.querySelector('.svc-dim'), { opacity: 0.65, ease: 'none', scrollTrigger: trigger })
-        }
-        gsap.from(card.querySelectorAll('.svc-word'), {
-          yPercent: 115,
-          duration: 1,
-          ease: 'power4.out',
-          stagger: 0.06,
-          scrollTrigger: { trigger: card, start: 'top 80%', once: true },
-        })
-        gsap.from(card.querySelectorAll('.svc-fade'), {
-          y: 24,
+      gsap.utils.toArray<HTMLElement>('.svc-row', root).forEach((row) => {
+        const trigger = { trigger: row, start: 'top 85%', end: 'top 35%', scrub: 0.5 }
+        gsap.fromTo(row.querySelector('.svc-rule'), { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: trigger })
+        gsap.fromTo(
+          row.querySelector('.svc-fill'),
+          { clipPath: 'inset(0 100% 0 0)' },
+          { clipPath: 'inset(0 0% 0 0)', ease: 'none', scrollTrigger: trigger },
+        )
+        gsap.from(row.querySelectorAll('.svc-fade'), {
+          y: 22,
           opacity: 0,
           duration: 0.9,
           ease: 'power3.out',
-          stagger: 0.08,
-          scrollTrigger: { trigger: card, start: 'top 75%', once: true },
+          stagger: 0.1,
+          scrollTrigger: { trigger: row, start: 'top 75%', once: true },
         })
       })
     })
@@ -136,42 +130,47 @@ export default function Services() {
           </Reveal>
 
           <ul className="m-0 list-none p-0">
-            {SERVICES.map((s, i) => {
+            {SERVICES.map((s) => {
               const price = priceFor(s.price, region)
+              const title = 'font-sans text-[clamp(2rem,5.6vw,4.75rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.04em]'
               return (
-                <li
-                  key={s.title}
-                  className="svc-card sticky mb-5 md:mb-8"
-                  style={{ top: `calc(var(--nav-h, 74px) + 0.75rem + ${i * 0.85}rem)` }}
-                >
-                  <div className="svc-inner relative origin-top overflow-hidden rounded-2xl border border-hairline bg-panel p-6 md:rounded-3xl md:p-10">
-                    <div className="flex min-h-[44svh] flex-col justify-between gap-8 md:min-h-[min(52svh,460px)] lg:flex-row lg:items-end lg:gap-14">
-                      <div className="lg:max-w-[58%]">
-                        <span className="svc-fade font-mono text-[11px] tracking-[0.2em] text-carnation">
-                          {s.index} / 0{SERVICES.length}
-                        </span>
-                        <h3 className="m-0 mt-4 font-sans text-[clamp(2rem,6.4vw,4.75rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.04em] text-ivory">
-                          {s.title.split(' ').map((word, w) => (
-                            <span key={w} className="mr-[0.22em] inline-block overflow-hidden align-bottom">
-                              <span className="svc-word inline-block">{word}</span>
-                            </span>
-                          ))}
-                        </h3>
-                      </div>
+                <li key={s.title} className="svc-row group relative py-8 md:py-12">
+                  {/* the rule: a faint track, with a red line that draws over it */}
+                  <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-hairline" />
+                  <span
+                    aria-hidden="true"
+                    className="svc-rule absolute inset-x-0 top-0 h-px origin-left bg-carnation"
+                    style={{ transform: 'scaleX(0)' }}
+                  />
 
-                      <div className="svc-fade lg:max-w-sm lg:text-right">
-                        <p className="text-[15px] leading-relaxed text-muted">{s.line}</p>
-                        <p className="mt-4 font-display text-3xl text-ivory md:text-4xl">
-                          {price.value ? `from ${price.value}` : 'By quote'}
-                          {price.unit && (
-                            <span className="ml-2 font-sans text-sm text-muted">{price.unit}</span>
-                          )}
-                        </p>
-                        <p className="mt-1 text-[12.5px] text-dim">{price.note}</p>
-                      </div>
+                  <div className="grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-10">
+                    <div className="lg:col-span-8">
+                      <span className="svc-fade font-mono text-[11px] tracking-[0.2em] text-carnation">
+                        {s.index} / 0{SERVICES.length}
+                      </span>
+                      {/* outlined title; an identical solid copy is revealed over it as you scroll */}
+                      <h3 className="relative m-0 mt-3 transition-transform duration-500 ease-out group-hover:translate-x-2 md:mt-4">
+                        <span className={`${title} block text-transparent [-webkit-text-stroke:1px_rgba(244,241,234,0.4)]`}>
+                          {s.title}
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          className={`${title} svc-fill pointer-events-none absolute inset-0 block text-ivory`}
+                          style={{ clipPath: 'inset(0 100% 0 0)' }}
+                        >
+                          {s.title}
+                        </span>
+                      </h3>
                     </div>
-                    {/* darkens as the next card slides over this one */}
-                    <div className="svc-dim pointer-events-none absolute inset-0 bg-black opacity-0" />
+
+                    <div className="svc-fade lg:col-span-4 lg:text-right">
+                      <p className="max-w-sm text-[15px] leading-relaxed text-muted lg:ml-auto">{s.line}</p>
+                      <p className="mt-4 font-display text-3xl text-ivory transition-colors group-hover:text-carnation md:text-4xl">
+                        {price.value ? `from ${price.value}` : 'By quote'}
+                        {price.unit && <span className="ml-2 font-sans text-sm text-muted">{price.unit}</span>}
+                      </p>
+                      <p className="mt-1 text-[12.5px] text-dim">{price.note}</p>
+                    </div>
                   </div>
                 </li>
               )
