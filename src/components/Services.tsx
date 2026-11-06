@@ -1,56 +1,37 @@
 import { useLayoutEffect, useRef } from 'react'
 import Reveal from './Reveal'
 import SectionLabel from './SectionLabel'
-import { SERVICES } from '../lib/content'
-import { REGIONS, money, type RegionKey } from '../lib/config'
-import { useRegion } from '../lib/region'
 import RegionSwitch from './RegionSwitch'
 import Roll from './Roll'
 import Icon from './Icon'
+import { SERVICES } from '../lib/content'
+import { REGIONS, money, type RegionKey } from '../lib/config'
+import { useRegion } from '../lib/region'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 
-/* Copy here describes the kinds of work already shown in the Work section —
-   no turnaround times, prices or guarantees are promised. */
+/* One line per step; the Brief is the way in, so it comes first. */
 const PROCESS = [
-  { step: 'Brief', body: 'Answer five quick questions. I reply with a rough plan, a price range and, if it helps, a short call.' },
-  { step: 'Design', body: 'Layout and flows agreed on screen before anything is built.' },
-  { step: 'Build', body: 'Working software you can click through, not a slide deck about it.' },
-  { step: 'Launch', body: 'Deployed, checked on real devices, and walked through with you.' },
+  { step: 'Brief', body: 'Five questions. I reply with a plan and a price range.' },
+  { step: 'Design', body: 'Layout agreed on screen before anything is built.' },
+  { step: 'Build', body: 'Working software you can click through.' },
+  { step: 'Launch', body: 'Deployed, tested on real devices, walked through.' },
 ]
 
 /* "From" figures only — see REGIONS in lib/config.ts. Websites are charged by
-   the page; the other two are scoped per project. The list follows the
-   visitor's region. */
-function buildPrices(region: RegionKey) {
+   the page; software is scoped per project. The list follows the visitor's
+   region. */
+function priceFor(kind: (typeof SERVICES)[number]['price'], region: RegionKey) {
   const r = REGIONS[region]
   const m = (n: number) => money(n, region)
-  return [
-    {
-      label: 'Websites',
-      price: m(r.perPage),
-      unit: 'per page',
-      note: `Charged by the number of pages, so you pay for exactly what the site needs. A 6-page brand site starts around ${m(6 * r.perPage)}.`,
-    },
-    {
-      label: 'Online stores',
-      price: m(r.store),
-      unit: '',
-      note: 'Product pages, cart and payments, scoped by the size of the catalogue and the payment options.',
-    },
-    {
-      label: 'Custom software',
-      price: m(r.software),
-      unit: '',
-      note: 'POS, billing, hospital portals and desktop tools, quoted per project after a short call.',
-    },
-  ]
+  if (kind === 'page') return { value: m(r.perPage), unit: 'per page', note: `Stores from ${m(r.store)}` }
+  if (kind === 'software') return { value: m(r.software), unit: '', note: 'Quoted per project' }
+  return { value: '', unit: '', note: 'Quoted after a short call' }
 }
 
 export default function Services() {
   const section = useRef<HTMLElement>(null)
-  const [region] = useRegion()
-  const PRICES = buildPrices(region)
   const process = useRef<HTMLOListElement>(null)
+  const [region] = useRegion()
 
   /* The process plays out in order as you scroll, scrubbed so it runs exactly
      as fast as you scroll and backwards on the way up.
@@ -129,30 +110,52 @@ export default function Services() {
 
         <div>
           <Reveal>
-            <h2 className="mb-12 max-w-3xl font-display text-4xl font-normal text-ivory md:mb-16 md:text-6xl">
-              What I <span className="italic text-carnation-deep">build</span>.
-            </h2>
+            <div className="mb-10 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 md:mb-14">
+              <h2 className="font-display text-4xl font-normal text-ivory md:text-6xl">
+                What I <span className="italic text-carnation-deep">build</span>.
+              </h2>
+              <RegionSwitch />
+            </div>
           </Reveal>
 
           <ul className="m-0 list-none p-0">
-            {SERVICES.map((s, i) => (
-              <Reveal key={s.title} delay={i * 80}>
-                <li className="svc-row group grid gap-4 border-t border-hairline py-8 lg:grid-cols-12 lg:gap-14 lg:py-10">
-                  <div className="flex items-baseline gap-5 lg:col-span-6">
-                    <span className="font-mono text-[11px] tracking-[0.2em] text-carnation">
-                      {s.index}
-                    </span>
-                    <h3 className="font-sans text-2xl font-light tracking-tight text-ivory transition-colors group-hover:text-carnation md:text-4xl">
-                      {s.title}
-                    </h3>
-                  </div>
-                  <p className="max-w-xl text-[15.5px] leading-relaxed text-muted md:text-[17px] lg:col-span-6">
-                    {s.body}
-                  </p>
-                </li>
-              </Reveal>
-            ))}
+            {SERVICES.map((s, i) => {
+              const price = priceFor(s.price, region)
+              return (
+                <Reveal key={s.title} delay={i * 80}>
+                  <li className="svc-row group grid gap-3 border-t border-hairline py-7 lg:grid-cols-12 lg:items-baseline lg:gap-10 lg:py-9">
+                    <div className="flex items-baseline gap-5 lg:col-span-5">
+                      <span className="font-mono text-[11px] tracking-[0.2em] text-carnation">
+                        {s.index}
+                      </span>
+                      <h3 className="font-sans text-2xl font-light tracking-tight text-ivory transition-colors group-hover:text-carnation md:text-3xl">
+                        {s.title}
+                      </h3>
+                    </div>
+                    <p className="pl-[2.6rem] text-[15px] leading-relaxed text-muted lg:col-span-4 lg:pl-0">
+                      {s.line}
+                    </p>
+                    <div className="pl-[2.6rem] lg:col-span-3 lg:pl-0 lg:text-right">
+                      {price.value ? (
+                        <p className="font-display text-2xl text-ivory md:text-3xl">
+                          from {price.value}
+                          {price.unit && (
+                            <span className="ml-2 font-sans text-sm text-muted">{price.unit}</span>
+                          )}
+                        </p>
+                      ) : (
+                        <p className="font-display text-2xl text-ivory md:text-3xl">By quote</p>
+                      )}
+                      <p className="mt-1 text-[12.5px] text-dim">{price.note}</p>
+                    </div>
+                  </li>
+                </Reveal>
+              )
+            })}
           </ul>
+          <p className="mt-2 text-[12.5px] leading-relaxed text-dim">
+            Starting points, not quotes. The final price depends on pages, features and timeline.
+          </p>
 
           <Reveal>
             <h3 className="mb-8 mt-20 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
@@ -200,7 +203,7 @@ export default function Services() {
           </ol>
 
           <Reveal>
-            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <div className="mt-10">
               <a
                 href="#contact"
                 className="btn-primary inline-flex items-center gap-2 px-6 py-3.5 font-mono text-[12px] uppercase tracking-[0.12em]"
@@ -208,36 +211,8 @@ export default function Services() {
                 <Roll>Start your brief</Roll>
                 <Icon name="arrow" className="h-3.5 w-3.5" />
               </a>
-              <span className="text-[13px] text-dim">Five questions, a couple of minutes.</span>
             </div>
           </Reveal>
-
-          <Reveal>
-            <h3 className="mb-8 mt-20 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-              How it's priced
-            </h3>
-            <RegionSwitch className="-mt-4 mb-8" />
-          </Reveal>
-          <div className="grid gap-0 md:grid-cols-3">
-            {PRICES.map((p, i) => (
-              <Reveal key={p.label} delay={i * 80}>
-                <div className="h-full border-t border-hairline py-6 pr-8">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-carnation">
-                    {p.label}
-                  </p>
-                  <p className="mt-3 font-display text-3xl text-ivory md:text-4xl">
-                    from {p.price}
-                    {p.unit && <span className="ml-2 text-base text-muted">{p.unit}</span>}
-                  </p>
-                  <p className="mt-3 text-[14.5px] leading-relaxed text-muted">{p.note}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-          <p className="mt-2 text-[12.5px] leading-relaxed text-dim">
-            Starting points, not quotes. The final price depends on the pages, the features and the
-            timeline.
-          </p>
         </div>
       </div>
     </section>

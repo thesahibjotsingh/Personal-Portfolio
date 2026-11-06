@@ -11,34 +11,28 @@ import { PROJECTS, type Project } from '../lib/projects'
 export default function Work() {
   const stack = useRef<HTMLDivElement>(null)
 
-  /* Desktop: every panel is sticky, so the next one slides up over the last.
-     As that happens the covered panel shrinks and dims. Titles rise out of a
-     mask the first time a panel comes into view. Below 1024px the panels are
-     plain stacked sections and only the title reveal runs. */
+  /* Every panel is sticky, on phones as well as desktop, so the next one slides
+     up over the last. As that happens the covered panel shrinks and dims (a
+     little less on phones, where there is less room to spare). Titles rise out
+     of a mask the first time a panel comes into view. */
   useLayoutEffect(() => {
     const root = stack.current
     if (!root || prefersReducedMotion()) return
 
     const mm = gsap.matchMedia()
 
-    mm.add('(min-width: 1024px)', () => {
+    const stacking = (scale: number) => {
       const panels = gsap.utils.toArray<HTMLElement>('.panel-stack', root)
       panels.forEach((panel, i) => {
         const next = panels[i + 1]
         if (!next) return
         const trigger = { trigger: next, start: 'top bottom', end: 'top top', scrub: true }
-        gsap.to(panel.querySelector('.panel-inner'), {
-          scale: 0.92,
-          ease: 'none',
-          scrollTrigger: trigger,
-        })
-        gsap.to(panel.querySelector('.panel-dim'), {
-          opacity: 0.7,
-          ease: 'none',
-          scrollTrigger: trigger,
-        })
+        gsap.to(panel.querySelector('.panel-inner'), { scale, ease: 'none', scrollTrigger: trigger })
+        gsap.to(panel.querySelector('.panel-dim'), { opacity: 0.7, ease: 'none', scrollTrigger: trigger })
       })
-    })
+    }
+    mm.add('(min-width: 1024px)', () => stacking(0.92))
+    mm.add('(max-width: 1023px)', () => stacking(0.95))
 
     mm.add('(min-width: 0px)', () => {
       gsap.utils.toArray<HTMLElement>('.panel-stack', root).forEach((panel) => {
@@ -75,8 +69,7 @@ export default function Work() {
                 <span className="italic text-carnation-deep">in the open</span>.
               </h2>
               <p className="max-w-xs text-[13.5px] leading-relaxed text-muted">
-                Three platforms live today, three more in the workshop — a hospital site, a
-                billing suite and a desktop PDF editor.
+                Three live, three in the workshop.
               </p>
             </div>
           </Reveal>
@@ -201,9 +194,14 @@ function Panel({
   useAutoPan(shot, !project.mobileImage)
 
   return (
+    <>
+      {/* Anchor target. The panels are sticky, so once you are past one its own
+          position reads as "top of the screen" and a link to it would go
+          nowhere. This zero-height marker sits in normal flow at the panel's
+          slot instead, so links such as the nav's project menu always work. */}
+      <span id={project.slug} aria-hidden="true" className="block h-0" />
     <article
-      id={project.slug}
-      className={`panel-stack group relative overflow-hidden lg:sticky lg:top-0 lg:h-svh lg:min-h-svh ${
+      className={`panel-stack group sticky top-0 h-svh min-h-svh overflow-hidden ${
         first ? '' : 'border-t border-hairline'
       }`}
       /* The first panel fades up out of the page colour so there is no hard
@@ -217,7 +215,7 @@ function Panel({
     >
       <Wrapper
         {...linkProps}
-        className="panel-inner relative flex h-full flex-col gap-6 px-6 pb-12 pt-10 md:px-10 lg:min-h-0 lg:origin-top lg:pb-0 lg:pt-[calc(var(--nav-h,74px)+1.5rem)]"
+        className="panel-inner relative flex h-full origin-top flex-col gap-4 px-6 pb-8 pt-[calc(var(--nav-h,74px)+0.75rem)] md:px-10 lg:gap-6 lg:pb-0"
       >
         <div className="flex w-full items-center justify-between gap-4">
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
@@ -237,7 +235,7 @@ function Panel({
             nothing is cropped; it is never drawn larger than its own pixels. */}
         <div
           ref={shot}
-          className={`panel-shot flex items-start gap-4 [-ms-overflow-style:none] [scrollbar-width:none] lg:justify-center lg:overflow-visible [&::-webkit-scrollbar]:hidden ${
+          className={`panel-shot flex min-h-0 flex-1 items-center gap-4 [-ms-overflow-style:none] [scrollbar-width:none] lg:flex-none lg:items-start lg:justify-center lg:overflow-visible [&::-webkit-scrollbar]:hidden ${
             /* phones with a mobile screenshot: just show it, centred. Without
                one, fall back to the desktop shot as a swipeable strip. */
             project.mobileImage ? 'justify-center' : 'justify-start overflow-x-auto'
@@ -260,7 +258,7 @@ function Panel({
             height={project.imageSize[1]}
             loading="lazy"
             decoding="async"
-            className={`h-[min(36svh,260px)] w-auto max-w-none shrink-0 rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:block lg:h-[var(--shot-h)] ${
+            className={`h-[min(34svh,290px)] w-auto max-w-none shrink-0 rounded-t-xl border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:block lg:h-[var(--shot-h)] ${
               project.mobileImage ? 'hidden' : ''
             }`}
           />
@@ -272,7 +270,7 @@ function Panel({
               height={project.mobileSize?.[1]}
               loading="lazy"
               decoding="async"
-              className="h-auto w-[min(78vw,300px)] shrink-0 rounded-[1.25rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:hidden"
+              className="h-[min(40svh,340px)] w-auto shrink-0 rounded-[1.25rem] border border-hairline shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] lg:hidden"
             />
           )}
         </div>
@@ -290,7 +288,7 @@ function Panel({
 
         <div className="flex flex-col gap-6 lg:absolute lg:inset-x-10 lg:bottom-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
           <div className="lg:max-w-[62%]">
-            <h3 className="m-0 font-sans text-[clamp(3rem,8vw,8.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory">
+            <h3 className="m-0 font-sans text-[clamp(2.25rem,9.5vw,3.25rem)] lg:text-[clamp(3rem,8vw,8.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory">
               {project.short.split(' ').map((word, i) => (
                 <span key={i} className="mr-[0.2em] inline-block overflow-hidden align-bottom">
                   <span className="pt-word inline-block">
@@ -299,16 +297,20 @@ function Panel({
                 </span>
               ))}
             </h3>
-            <p className="mt-3 text-[15px] text-muted">{project.title}</p>
+            {project.title !== project.short && (
+              <p className="mt-3 hidden text-[15px] text-muted sm:block">{project.title}</p>
+            )}
           </div>
 
           <div className="lg:max-w-md lg:rounded-xl lg:border lg:border-white/10 lg:bg-black/45 lg:p-5 lg:backdrop-blur-md">
-            <p className="text-[15px] leading-relaxed text-muted">{project.blurb}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {project.tags.map((t) => (
+            <p className="text-[14px] leading-snug text-muted lg:text-[15px] lg:leading-relaxed">{project.blurb}</p>
+            <div className="mt-3 flex flex-wrap gap-2 lg:mt-4">
+              {project.tags.map((t, ti) => (
                 <span
                   key={t}
-                  className="chip px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.08em] text-dim"
+                  className={`chip px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.08em] text-dim ${
+                    ti >= 3 ? 'max-lg:hidden' : ''
+                  }`}
                 >
                   {t}
                 </span>
@@ -323,7 +325,7 @@ function Panel({
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.12em] text-ivory transition-colors hover:text-carnation"
+                className="mt-3 inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[11px] lg:mt-5 uppercase tracking-[0.12em] text-ivory transition-colors hover:text-carnation"
               >
                 <Roll>Request a walkthrough</Roll>
                 <span className="sr-only"> of {project.title} (opens WhatsApp in a new tab)</span>
@@ -336,12 +338,13 @@ function Panel({
       {/* darkens as the next panel slides over this one */}
       <div className="panel-dim pointer-events-none absolute inset-0 bg-black opacity-0" />
     </article>
+    </>
   )
 }
 
 function Cue({ label }: { label: string }) {
   return (
-    <span className="mt-5 inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.12em] text-ivory transition-colors group-hover:text-carnation">
+    <span className="mt-3 inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[11px] lg:mt-5 uppercase tracking-[0.12em] text-ivory transition-colors group-hover:text-carnation">
       <Roll>{label}</Roll>
       <svg
         width="13"

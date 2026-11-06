@@ -46,8 +46,7 @@ export const PROJECTS: Project[] = [
     title: 'Custom Cloud-Hosted POS System',
     meta: 'Own product',
     status: 'Live',
-    blurb:
-      'A register that syncs across every terminal in real time — order queues, inventory and receipts, built on Firebase so a dropped connection never means a lost sale.',
+    blurb: 'A register that syncs across every terminal in real time.',
     tags: ['Firebase', 'Firestore', 'JavaScript', 'Real-time Sync', 'PWA'],
     href: 'https://demo-pos-system.pages.dev/',
     cta: 'View live demo',
@@ -67,8 +66,7 @@ export const PROJECTS: Project[] = [
     title: 'The Crosta',
     meta: 'thecrosta.com',
     status: 'Live',
-    blurb:
-      "An artisanal food brand's storefront — product storytelling, a checkout that doesn't fight the customer, and a design system built around the product photography.",
+    blurb: "An artisanal pizza storefront with a checkout that doesn't fight the customer.",
     tags: ['E-Commerce', 'Custom CMS', 'HTML5', 'CSS3', 'JavaScript', 'Responsive'],
     href: 'https://thecrosta.com',
     cta: 'Visit site',
@@ -88,8 +86,7 @@ export const PROJECTS: Project[] = [
     title: 'Barkat & Company',
     meta: 'barkatandcompany.com',
     status: 'Live',
-    blurb:
-      'A corporate web platform built for credibility first — clear service architecture, fast load times, and a content structure the client can maintain without a developer.',
+    blurb: 'A corporate platform built for credibility, speed and easy upkeep.',
     tags: ['Corporate Site', 'SEO Structure', 'HTML5', 'CSS3', 'JavaScript', 'Responsive'],
     href: 'https://barkatandcompany.com',
     cta: 'Visit site',
@@ -109,8 +106,7 @@ export const PROJECTS: Project[] = [
     title: 'LIMS Hospital Platform',
     meta: 'Lifeline Institute, Hisar',
     status: 'In development',
-    blurb:
-      "The web platform for Lifeline Institute of Medical Sciences — a department-by-department services directory, quick actions for patients, and a structure built to grow across every service the hospital offers.",
+    blurb: 'The web platform for Lifeline Institute of Medical Sciences, Hisar.',
     tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Accessibility'],
     image: limsPreview,
     imageAlt: 'LIMS hospital home page — find a doctor or department',
@@ -128,8 +124,7 @@ export const PROJECTS: Project[] = [
     title: 'QuickBill',
     meta: 'Own product',
     status: 'In development',
-    blurb:
-      'A Tally-style GST quotation and tax-invoice generator for Indian small businesses — a tested calculation engine, financial-year numbering, and Firestore sync that switches on with a single credential.',
+    blurb: 'GST quotations and tax invoices for Indian small businesses.',
     tags: ['Next.js', 'TypeScript', 'Firestore', 'Cloudflare'],
     image: quickbillPreview,
     imageAlt: 'QuickBill home screen — quotations, parties and items',
@@ -147,8 +142,7 @@ export const PROJECTS: Project[] = [
     title: 'PDFStudio',
     meta: 'Own product',
     status: 'In development',
-    blurb:
-      'A PDF and document editor that runs on your own machine — a Python engine behind a desktop interface, built for editing files without handing them to a web service.',
+    blurb: 'A PDF and document editor that runs on your own machine.',
     tags: ['Python', 'Desktop App', 'PDF Engine', 'Local-first'],
     image: pdfstudioPreview,
     imageAlt: 'PDFStudio home screen — 48 PDF tools',

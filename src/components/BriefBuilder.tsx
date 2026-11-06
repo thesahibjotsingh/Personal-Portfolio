@@ -537,6 +537,13 @@ export default function BriefBuilder({
                 className="w-full resize-none px-3.5 py-3 text-[14px]"
               />
             </div>
+
+            <p className="bb-item text-[12px] leading-relaxed text-dim">
+              Used only to reply to you.{' '}
+              <a href="/privacy" className="underline decoration-dotted underline-offset-2 hover:text-ivory">
+                Privacy
+              </a>
+            </p>
           </div>
         )}
       </div>

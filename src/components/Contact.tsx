@@ -4,14 +4,11 @@ import StretchHeading from './StretchHeading'
 import SectionLabel from './SectionLabel'
 import BriefBuilder from './BriefBuilder'
 import Icon, { type IconName } from './Icon'
-import { CONFIG, REGIONS, money } from '../lib/config'
-import { useRegion } from '../lib/region'
+import { CONFIG } from '../lib/config'
 
 type Toast = { type: 'success' | 'error'; text: string } | null
 
 export default function Contact() {
-  const [region] = useRegion()
-  const price = REGIONS[region]
   const [toast, setToast] = useState<Toast>(null)
   const toastTimer = useRef<number | undefined>(undefined)
 
@@ -44,13 +41,7 @@ export default function Contact() {
                   <span className="italic text-carnation-deep">building</span>.
                 </h2>
                 <p className="mt-4 text-[14px] leading-relaxed text-muted">
-                  Five quick questions and I'll know enough to scope it, so the first reply is
-                  useful rather than a list of questions. No pitch deck, no pressure.
-                </p>
-                <p className="mt-4 border-l border-carnation/60 pl-4 text-[13px] leading-relaxed text-muted">
-                  Websites are charged by the page — from about {money(price.perPage, region)} a
-                  page. Stores start around {money(price.store, region)}; custom software around{' '}
-                  {money(price.software, region)}.
+                  Five quick questions, so my first reply is useful. No pitch deck, no pressure.
                 </p>
               </div>
 

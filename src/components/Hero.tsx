@@ -87,8 +87,7 @@ export default function Hero() {
           style={step(2)}
         >
           <span className="hero-fade block">
-            I build the whole product — the interface, the data behind it and the deploy — for
-            brands that need to be taken seriously online.
+            Websites, stores and software for brands that need to be taken seriously online.
           </span>
         </p>
 

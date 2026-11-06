@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { PROJECTS } from '../lib/projects'
-import { SERVICES, PILLARS, STACK_ITEMS } from '../lib/content'
 import { CONFIG } from '../lib/config'
 import StatusTag from './StatusTag'
 import Roll from './Roll'
-import StackMark from './StackMark'
+
+/* Only these two open a menu: the project list and the ways to reach me are
+   worth a shortcut; the other sections are one scroll away. */
+const HAS_MENU = new Set(['Work', 'Contact'])
 
 const NAV_LINKS = [
   { label: 'Work', href: '#work' },
   { label: 'Services', href: '#services' },
   { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#stack' },
+  { label: 'Stack', href: '#stack' },
   { label: 'Contact', href: '#contact' },
 ]
 
@@ -123,17 +125,30 @@ export default function Navbar() {
           </a>
 
           <div className="hidden items-center gap-10 min-[900px]:flex">
-            {NAV_LINKS.map((link) => (
-              <NavDropdown
-                key={link.label}
-                link={link}
-                isActive={active === link.href.slice(1)}
-                align={link.label === 'Contact' ? 'right' : 'center'}
-                width={link.label === 'Skills' ? 'w-[22rem]' : link.label === 'Contact' ? 'w-[20rem]' : 'w-[26rem]'}
-              >
-                <DropdownContent label={link.label} />
-              </NavDropdown>
-            ))}
+            {NAV_LINKS.map((link) =>
+              HAS_MENU.has(link.label) ? (
+                <NavDropdown
+                  key={link.label}
+                  link={link}
+                  isActive={active === link.href.slice(1)}
+                  align={link.label === 'Contact' ? 'right' : 'center'}
+                  width={link.label === 'Contact' ? 'w-[20rem]' : 'w-[26rem]'}
+                >
+                  <DropdownContent label={link.label} />
+                </NavDropdown>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  aria-current={active === link.href.slice(1) ? 'true' : undefined}
+                  className={`text-[0.9375rem] font-medium transition-colors hover:text-carnation ${
+                    active === link.href.slice(1) ? 'text-ivory' : 'text-muted'
+                  }`}
+                >
+                  {link.label}
+                </a>
+              ),
+            )}
             <a
               href="#contact"
               className="inline-flex items-center gap-2 rounded-full border border-carnation px-6 py-[0.7rem] text-[0.9375rem] font-medium text-carnation transition-colors hover:bg-carnation hover:text-void"
@@ -317,51 +332,6 @@ function DropdownContent({ label }: { label: string }) {
             ))}
           </ul>
           <MenuFooter href="#work" label="View all work" />
-        </>
-      )
-    case 'Services':
-      return (
-        <>
-          <ul className="m-0 list-none p-0">
-            {SERVICES.map((s) => (
-              <li key={s.title}>
-                <MenuRow href="#services" title={s.title} sub={`Service ${s.index}`} />
-              </li>
-            ))}
-          </ul>
-          <MenuFooter href="#services" label="How a project runs" />
-        </>
-      )
-    case 'About':
-      return (
-        <>
-          <ul className="m-0 list-none p-0">
-            {PILLARS.map((p) => (
-              <li key={p.title}>
-                <MenuRow href="#about" title={p.title} sub={p.body} />
-              </li>
-            ))}
-          </ul>
-          <MenuFooter href="#about" label="More about me" />
-        </>
-      )
-    case 'Skills':
-      return (
-        <>
-          <ul className="m-0 grid list-none grid-cols-2 gap-1 p-0">
-            {STACK_ITEMS.map((t) => (
-              <li key={t.name}>
-                <a
-                  href="#stack"
-                  className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 transition-colors hover:bg-ivory/10 focus-visible:bg-ivory/10"
-                >
-                  <StackMark item={t} className="h-5 w-5" />
-                  <span className="text-[14px] text-ivory">{t.name}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-          <MenuFooter href="#stack" label="Full toolbench" />
         </>
       )
     case 'Contact':

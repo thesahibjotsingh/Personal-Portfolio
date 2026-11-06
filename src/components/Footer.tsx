@@ -86,12 +86,20 @@ export default function Footer() {
         <p className="font-mono text-[11px] text-dim">
           © {new Date().getFullYear()} {CONFIG.name}. Built by hand.
         </p>
-        <a
-          href="#top"
-          className="font-mono text-[11px] uppercase tracking-[0.12em] text-dim transition-colors hover:text-ivory"
-        >
-          Back to top ↑
-        </a>
+        <div className="flex items-center gap-6">
+          <a
+            href="/privacy"
+            className="font-mono text-[11px] uppercase tracking-[0.12em] text-dim transition-colors hover:text-ivory"
+          >
+            Privacy
+          </a>
+          <a
+            href="#top"
+            className="font-mono text-[11px] uppercase tracking-[0.12em] text-dim transition-colors hover:text-ivory"
+          >
+            Back to top ↑
+          </a>
+        </div>
       </div>
     </footer>
   )
