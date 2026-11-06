@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from 'react'
 import SectionLabel from './SectionLabel'
 import Reveal from './Reveal'
 import { PILLARS } from '../lib/content'
+import portrait from '../assets/portrait.webp'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 
 const STATEMENT =
@@ -50,13 +51,15 @@ export default function About() {
           </p>
 
           <div className="mt-16 grid gap-10 md:grid-cols-[minmax(0,260px)_1fr] md:gap-14">
-            {/* Portrait slot — put a photo at /public/portrait.jpg and swap this
-                block for an <img src="/portrait.jpg" /> when you have one. */}
             <Reveal>
-              <div className="panel relative flex aspect-[2/3] items-center justify-center overflow-hidden rounded-full">
-                <span className="font-display text-[7rem] italic text-carnation/70">S</span>
-                <span className="absolute bottom-[18%] rounded-full border border-white/15 bg-black/50 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ivory backdrop-blur">
-                  Portrait soon
+              <div className="panel relative aspect-[2/3] overflow-hidden rounded-full">
+                <img
+                  src={portrait}
+                  alt="Portrait of Sahibjot Singh"
+                  className="h-full w-full object-cover object-[58%_35%]"
+                />
+                <span className="absolute bottom-[14%] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/15 bg-black/50 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ivory backdrop-blur">
+                  Sahibjot Singh
                 </span>
               </div>
             </Reveal>
