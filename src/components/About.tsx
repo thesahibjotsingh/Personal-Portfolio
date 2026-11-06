@@ -50,28 +50,29 @@ export default function About() {
             ))}
           </p>
 
-          <div className="mt-16 grid gap-10 md:grid-cols-[minmax(0,260px)_1fr] md:gap-14">
+          <div className="mt-20 flex flex-col items-center">
             <Reveal>
-              <div className="panel relative aspect-[2/3] overflow-hidden rounded-full">
+              {/* arch: fully rounded top, softly rounded base */}
+              <div className="panel relative aspect-[4/5] w-[min(78vw,340px)] overflow-hidden rounded-b-[2rem] rounded-t-full">
                 <img
                   src={portrait}
                   alt="Portrait of Sahibjot Singh"
-                  className="h-full w-full object-cover object-[58%_35%]"
+                  className="h-full w-full object-cover object-[60%_32%]"
                 />
-                <span className="absolute bottom-[14%] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/15 bg-black/50 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ivory backdrop-blur">
+                <span className="absolute bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/15 bg-black/50 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ivory backdrop-blur">
                   Sahibjot Singh
                 </span>
               </div>
             </Reveal>
 
-            <ul className="m-0 flex list-none flex-col p-0">
+            <ul className="m-0 mt-16 grid w-full list-none gap-x-10 gap-y-2 p-0 md:grid-cols-3">
               {PILLARS.map((p, i) => (
                 <Reveal key={p.title} delay={i * 90}>
-                  <li className="grid gap-2 border-t border-hairline py-6 md:grid-cols-[200px_1fr] md:gap-8">
+                  <li className="h-full border-t border-hairline py-6">
                     <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-carnation">
                       {p.title}
                     </h3>
-                    <p className="text-[15px] leading-relaxed text-muted">{p.body}</p>
+                    <p className="mt-3 text-[15px] leading-relaxed text-muted">{p.body}</p>
                   </li>
                 </Reveal>
               ))}

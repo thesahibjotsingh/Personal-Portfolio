@@ -84,14 +84,22 @@ export default function Work() {
 
       <div ref={stack} className="relative">
         {PROJECTS.map((project) => (
-          <Panel key={project.slug} project={project} total={PROJECTS.length} />
+          <Panel key={project.slug} project={project} total={PROJECTS.length} first={project.index === '01'} />
         ))}
       </div>
     </section>
   )
 }
 
-function Panel({ project, total }: { project: Project; total: number }) {
+function Panel({
+  project,
+  total,
+  first,
+}: {
+  project: Project
+  total: number
+  first: boolean
+}) {
   const linkProps = project.href
     ? {
         href: project.href,
@@ -106,9 +114,16 @@ function Panel({ project, total }: { project: Project; total: number }) {
   return (
     <article
       id={project.slug}
-      className="panel-stack group relative min-h-svh overflow-hidden border-t border-hairline lg:sticky lg:top-0 lg:h-svh"
+      className={`panel-stack group relative min-h-svh overflow-hidden lg:sticky lg:top-0 lg:h-svh ${
+        first ? '' : 'border-t border-hairline'
+      }`}
+      /* The first panel fades up out of the page colour so there is no hard
+         edge under the section heading. Later panels keep a crisp top edge —
+         that edge is what reads as one card sliding over another. */
       style={{
-        background: `radial-gradient(120% 90% at 50% 0%, ${project.tint}, var(--color-void) 72%)`,
+        background: `${
+          first ? 'linear-gradient(to bottom, var(--color-void) 0%, transparent 38%), ' : ''
+        }radial-gradient(120% 90% at 50% 0%, ${project.tint}, var(--color-void) 72%)`,
       }}
     >
       <Wrapper
