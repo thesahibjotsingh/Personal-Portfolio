@@ -1,48 +1,36 @@
 import { useEffect } from 'react'
-import { ScrollTrigger, prefersReducedMotion } from '../lib/motion'
+import { ScrollTrigger } from '../lib/motion'
 
-/* The page is dark throughout, then turns light while the Contact section (and
-   the footer after it) is on screen. A ScrollTrigger from the middle of the
-   viewport to the very end of the page owns the state, so it also resolves
-   correctly if the page loads already scrolled down, and flips back when you
-   scroll up. Off for phones and for reduced motion, which stay dark. */
+/* Contact and the footer are a light "sheet" (data-scope="light") that scrolls
+   up over the dark page. The one thing that still has to follow along is the
+   fixed nav: once the sheet reaches it, the nav takes the same light scope, so
+   its text and bar stay readable over the light content. Only the nav changes
+   (a small element, on a short CSS transition), never the whole page.
+
+   Driven by progress rather than isActive, so it stays light through the very
+   last pixel of the page. */
 export default function ThemeSwitch() {
   useEffect(() => {
-    if (prefersReducedMotion()) return
+    const nav = document.querySelector('nav')
+    if (!nav) return
 
-    const root = document.documentElement
-    const mm = window.matchMedia('(min-width: 768px)')
-    let trigger: ScrollTrigger | undefined
+    const trigger = ScrollTrigger.create({
+      trigger: '#contact',
+      start: 'top 90px',
+      end: 'max',
+      onUpdate: (self) => {
+        if (self.progress > 0) nav.setAttribute('data-scope', 'light')
+        else nav.removeAttribute('data-scope')
+      },
+      onRefresh: (self) => {
+        if (self.progress > 0) nav.setAttribute('data-scope', 'light')
+        else nav.removeAttribute('data-scope')
+      },
+    })
 
-    const apply = (light: boolean) => {
-      if (light) root.setAttribute('data-theme', 'light')
-      else root.removeAttribute('data-theme')
-    }
-
-    const setup = () => {
-      trigger?.kill()
-      apply(false)
-      if (!mm.matches) return
-      /* Driven by progress, not isActive: at the exact last pixel of the page
-         ScrollTrigger reports the trigger as no longer active, which would
-         flip the theme back to dark right at the bottom. Any progress past the
-         start line (including the finished state) means "light". */
-      const sync = (self: ScrollTrigger) => apply(self.progress > 0)
-      trigger = ScrollTrigger.create({
-        trigger: '#contact',
-        start: 'top 55%',
-        end: 'max',
-        onUpdate: sync,
-        onRefresh: sync,
-      })
-    }
-
-    setup()
-    mm.addEventListener('change', setup)
     return () => {
-      mm.removeEventListener('change', setup)
-      trigger?.kill()
-      apply(false)
+      trigger.kill()
+      nav.removeAttribute('data-scope')
     }
   }, [])
 

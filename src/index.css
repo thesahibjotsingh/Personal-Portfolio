@@ -1,17 +1,5 @@
 @import "tailwindcss";
 
-/* Registering the theme colours as real <color> properties lets the browser
-   interpolate them, so flipping data-theme cross-fades the whole page instead
-   of snapping. Everything that reads these variables fades with them. */
-@property --color-void { syntax: '<color>'; inherits: true; initial-value: #0a0909; }
-@property --color-panel { syntax: '<color>'; inherits: true; initial-value: #0c0c0c; }
-@property --color-ivory { syntax: '<color>'; inherits: true; initial-value: #f4f1ea; }
-@property --color-carnation { syntax: '<color>'; inherits: true; initial-value: #ee4658; }
-@property --color-carnation-deep { syntax: '<color>'; inherits: true; initial-value: #cc2a3d; }
-@property --color-muted { syntax: '<color>'; inherits: true; initial-value: #9b9b9b; }
-@property --color-dim { syntax: '<color>'; inherits: true; initial-value: #7a7a7a; }
-@property --color-hairline { syntax: '<color>'; inherits: true; initial-value: rgba(255, 255, 255, 0.09); }
-@property --err { syntax: '<color>'; inherits: true; initial-value: #fb7185; }
 
 @theme {
   --color-void: #0a0909;
@@ -33,23 +21,12 @@
   --font-script: "Dancing Script", ui-serif, cursive;
 }
 
-/* Light theme — switched on by ThemeSwitch while the Contact section is in
-   view. Warm ivory page, near-black type, and a deeper red so small red text
-   keeps its contrast on the light ground. */
-:root {
-  color-scheme: dark;
-  transition:
-    --color-void 0.5s ease,
-    --color-panel 0.5s ease,
-    --color-ivory 0.5s ease,
-    --color-carnation 0.5s ease,
-    --color-carnation-deep 0.5s ease,
-    --color-muted 0.5s ease,
-    --color-dim 0.5s ease,
-    --color-hairline 0.5s ease,
-    --err 0.5s ease;
-}
-:root[data-theme='light'] {
+/* Light "sheet": Contact, the footer and (while it is over them) the nav carry
+   data-scope="light", which swaps the theme colours for that subtree only. The
+   rest of the page never recolours, so there is nothing to fade or flicker —
+   the light section just scrolls in over the dark one. Unlayered, so it beats
+   the @theme defaults. */
+[data-scope='light'] {
   color-scheme: light;
   --color-void: #ebe7e0;
   --color-panel: #e2ddd5;

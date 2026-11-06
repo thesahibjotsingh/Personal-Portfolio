@@ -118,7 +118,8 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="px-6 py-14 md:px-8 md:py-16"
+      data-scope="light"
+      className="rounded-t-[2rem] bg-void px-6 py-14 text-ivory shadow-[0_-30px_80px_-30px_rgba(0,0,0,0.6)] md:rounded-t-[3rem] md:px-8 md:py-24"
     >
       <StretchHeading text="Let's build" />
 
