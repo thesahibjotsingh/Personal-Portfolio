@@ -492,6 +492,24 @@ body::after {
   transform: translate(-50%, -50%) scale(1);
 }
 
+/* letter-swap — see CharSwap.tsx. Each letter lives in a box clipped to its own
+   width (with a little vertical slack so tall glyphs are never shaved). */
+.cs {
+  position: relative;
+  display: inline-block;
+  letter-spacing: 0;
+  clip-path: inset(-0.2em 0 -0.2em 0);
+}
+.cs-a {
+  display: inline-block;
+}
+.cs-b {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateX(-115%);
+}
+
 /* text-roll hover — see Roll.tsx */
 .roll {
   display: inline-grid;

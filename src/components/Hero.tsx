@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 import HeroMedia from './HeroMedia'
 import Roll from './Roll'
+import CharSwap from './CharSwap'
 import Icon from './Icon'
 import { CONFIG } from '../lib/config'
 
@@ -97,11 +98,13 @@ export default function Hero() {
                 Below that the text wraps naturally. text-wrap: balance is
                 deliberately avoided; it would even the lines out and kill the
                 ascending shape. */}
-            Websites that{' '}
+            <CharSwap text="Websites that" tracking={-0.02} />{' '}
             <br className="hidden min-[1400px]:inline" />
-            make your business{' '}
+            <CharSwap text="make your business" tracking={-0.02} />{' '}
             <br className="hidden min-[1400px]:inline" />
-            <span className="text-carnation">impossible to ignore.</span>
+            <span className="text-carnation">
+              <CharSwap text="impossible to ignore." tracking={-0.02} />
+            </span>
           </h1>
 
           <p

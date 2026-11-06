@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import Reveal from './Reveal'
 import Roll from './Roll'
+import CharSwap from './CharSwap'
 import SectionLabel from './SectionLabel'
 import StatusTag from './StatusTag'
 import { gsap, prefersReducedMotion } from '../lib/motion'
@@ -165,7 +166,9 @@ function Panel({
             <h3 className="m-0 font-sans text-[clamp(3rem,8vw,8.5rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.045em] text-ivory">
               {project.short.split(' ').map((word, i) => (
                 <span key={i} className="mr-[0.2em] inline-block overflow-hidden align-bottom">
-                  <span className="pt-word inline-block">{word}</span>
+                  <span className="pt-word inline-block">
+                    <CharSwap text={word} tracking={-0.045} />
+                  </span>
                 </span>
               ))}
             </h3>
