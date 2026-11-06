@@ -23,11 +23,17 @@ export default function ThemeSwitch() {
       trigger?.kill()
       apply(false)
       if (!mm.matches) return
+      /* Driven by progress, not isActive: at the exact last pixel of the page
+         ScrollTrigger reports the trigger as no longer active, which would
+         flip the theme back to dark right at the bottom. Any progress past the
+         start line (including the finished state) means "light". */
+      const sync = (self: ScrollTrigger) => apply(self.progress > 0)
       trigger = ScrollTrigger.create({
         trigger: '#contact',
         start: 'top 55%',
         end: 'max',
-        onToggle: (self) => apply(self.isActive),
+        onUpdate: sync,
+        onRefresh: sync,
       })
     }
 
